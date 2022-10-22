@@ -18,7 +18,7 @@ export const player_config = (label: string) => {
   return {
     restitution: Constants.PARTICLE_BOUNCYNESS,
     label: label,
-    frictionAir: 0.07,
+    frictionAir: 0.1,
     collisionFilter: {
       // colides only with walls and static elems
       category: Categories.STATIC

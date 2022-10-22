@@ -1,6 +1,5 @@
 import Matter from "matter-js";
 import { LocationChange, KeyMap } from "../models/input_interfaces";
-import { getBody, getConstraint } from "./matterjs_utils";
 
 export const handleKeypress = (keyMap: KeyMap, player: Matter.Body): LocationChange => {
   var x = player?.velocity?.x;
@@ -33,16 +32,4 @@ export const addListeners = (keyMap: KeyMap): void => {
   window.addEventListener('keyup', function (e) {
     keyMap[e.key] = false;
   }, true);
-}
-
-export const handleControl = (composites: any): LocationChange => {
-  const control = getBody(composites, 'controls', 'control');
-  const contrloConstraint = getConstraint(composites, 'controls', 'control');
-  if (control && contrloConstraint) {
-    const x = (control.position.x - contrloConstraint.pointA.x) / 70;
-    const y = (control.position.y - contrloConstraint.pointA.y) / 70;
-    return { x, y }
-  }
-
-  return { x: 0, y: 0 };
 }
