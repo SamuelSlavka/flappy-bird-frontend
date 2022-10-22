@@ -2,10 +2,10 @@ import Matter from "matter-js";
 import { Constants } from "../enums/gameConstants";
 import { getBody, getConstraint } from "./matterjs_utils";
 
-export const handleResize = (scene: any, constraints: DOMRect) => {
+export const handleResize = (scene: Matter.Render, engine: Matter.Engine, constraints: DOMRect) => {
   const { width, height } = constraints;
 
-  const composites = scene.engine.world.composites;
+  const composites = engine.world.composites;
   const floor = getBody(composites, 'elements', 'floor');
   const ceiling = getBody(composites, 'elements', 'ceiling');
   const leftWall = getBody(composites, 'elements', 'leftWall');
