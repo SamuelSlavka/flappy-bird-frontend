@@ -6,7 +6,9 @@ export const body_config = (label: string) => {
     isStatic: true,
     label: label,
     collisionFilter: {
-      category: Categories.STATIC,
+      // left colides with player and obstacle, others with player
+      category: label === 'leftWall' ? Categories.OBSTACLE : Categories.WALL,
+      mask: label === 'leftWall' ? 1 : 2,
     },
     render: {
       fillStyle: ColorScheme.white
@@ -20,8 +22,9 @@ export const player_config = (label: string) => {
     label: label,
     frictionAir: 0.1,
     collisionFilter: {
-      // colides only with walls and static elems
-      category: Categories.STATIC
+      // colides with everythin
+      category: Categories.PLAYER,
+      mask: 3
     },
     render: {
       fillStyle: ColorScheme.middle
@@ -29,24 +32,16 @@ export const player_config = (label: string) => {
   }
 }
 
-export const meteor_config = {
-  label: 'meteor',
-  restitution: Constants.PARTICLE_BOUNCYNESS,
-  frictionAir: 0.005,
+export const obstacle_config = {
+  label: 'obstacle',
+  frictionAir: 0,
+  frictionStatic: 0,
   collisionFilter: {
-    category: Categories.STATIC
+    // colides only with player
+    category: Categories.OBSTACLE,
+    mask: 1
   },
   render: {
     fillStyle: ColorScheme.light
-  }
-}
-
-export const bullet_config = {
-  label: 'bullet',
-  collisionFilter: {
-    category: Categories.STATIC
-  },
-  render: {
-    fillStyle: ColorScheme.red
   }
 }

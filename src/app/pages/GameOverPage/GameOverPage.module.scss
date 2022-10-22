@@ -1,0 +1,16 @@
+
+.HeaderText {
+  @apply pb-8 text-center text-5xl font-bold hover:text-light ease-in-out duration-200;
+  text-shadow: 0 0 4px black;
+}
+
+.PointsText {
+  @apply pb-8 text-center text-2xl font-bold hover:text-light ease-in-out duration-200;
+  text-shadow: 0 0 4px black;
+}
+
+
+.LinkGit {
+  @apply transition-all hover:text-light ease-in-out duration-200;
+  text-shadow: 0 0 4px black;
+}

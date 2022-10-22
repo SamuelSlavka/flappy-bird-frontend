@@ -1,6 +1,6 @@
 import Matter from "matter-js";
 import { Constants } from "../enums/gameConstants";
-import { getBody, getConstraint } from "./matterjs_utils";
+import { getBody } from "./matterjs_utils";
 
 export const handleResize = (scene: Matter.Render, engine: Matter.Engine, constraints: DOMRect) => {
   const { width, height } = constraints;
@@ -10,8 +10,6 @@ export const handleResize = (scene: Matter.Render, engine: Matter.Engine, constr
   const ceiling = getBody(composites, 'elements', 'ceiling');
   const leftWall = getBody(composites, 'elements', 'leftWall');
   const rightWall = getBody(composites, 'elements', 'rightWall');
-  const control = getBody(composites, 'controls', 'control');
-  const contrloConstraint = getConstraint(composites, 'controls', 'control');
 
   // Update canvas and bounds
   scene.bounds.max.x = width;
@@ -21,23 +19,11 @@ export const handleResize = (scene: Matter.Render, engine: Matter.Engine, constr
   scene.canvas.width = width;
   scene.canvas.height = height;
 
-  // update mobile control
-  if (control) {
-    Matter.Body.setPosition(control, {
-      x: width / 2,
-      y: height / 1.2
-    });
-  }
-  if (contrloConstraint) {
-    contrloConstraint.pointA.x = width / 2;
-    contrloConstraint.pointA.y = height / 1.2;
-  }
-
   //update floor location and size
   if (floor) {
     Matter.Body.setPosition(floor, {
       x: width / 2,
-      y: height + Constants.STATIC_DENSITY - 60
+      y: height + Constants.STATIC_DENSITY - 50
     });
 
     Matter.Body.setVertices(floor, [
@@ -47,8 +33,8 @@ export const handleResize = (scene: Matter.Render, engine: Matter.Engine, constr
       { x: -10, y: height + Constants.STATIC_DENSITY }
     ]);
   }
-  //update cieling location and size
 
+  //update cieling location and size
   if (ceiling) {
     Matter.Body.translate(ceiling, {
       x: width / 2,
@@ -62,6 +48,7 @@ export const handleResize = (scene: Matter.Render, engine: Matter.Engine, constr
       { x: -10, y: height + Constants.STATIC_DENSITY }
     ]);
   }
+
   //update floor location and size
   if (rightWall) {
     Matter.Body.setPosition(rightWall, {

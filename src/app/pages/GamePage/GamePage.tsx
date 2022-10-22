@@ -3,32 +3,40 @@ import React, { useEffect, useRef, useState } from 'react';
 import Matter from 'matter-js';
 import { ColorScheme } from '../../enums/ColorScheme';
 import { Link } from 'react-router-dom';
-import { addListeners, handleKeypress } from './utils/input_handling';
+import { handleSingleKeypress } from './utils/input_handling';
 import { handleResize } from './utils/resize_handling';
-import { Constants } from './enums/gameConstants';
+import { Constants, GameStages } from './enums/gameConstants';
 import { getBody } from './utils/matterjs_utils';
-import { body_config, meteor_config, player_config } from './utils/body_utils';
-
-var keyMap: { [id: string]: any } = {};
+import { body_config, obstacle_config, player_config } from './utils/body_utils';
+import { useNavigate } from "react-router-dom";
 
 var clock = 1;
+var clickedUp = false;
+
+const inputListener = (e: any) => {
+  if (e.code === 'Space' || e.code === 'KeyW') {
+    clickedUp = true;
+  }
+}
 
 const GamePage = () => {
   const boxRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const [constraints, setConstraints] = useState<DOMRect>();
-  const [scene, setScene] = useState<Matter.Render>();
+  const [render, setRender] = useState<Matter.Render>();
   const [engine, setEngine] = useState<Matter.Engine>();
   const [runner, setRunner] = useState<Matter.Runner>();
   const [points, setPoints] = useState<number>(0);
   const [events, setEvents] = useState<boolean>(false);
+  const [gameStage, setGameStage] = useState<GameStages>(GameStages.PLAY);
+
+  const navigate = useNavigate();
 
   // Matter setup
   useEffect(() => {
     const bounds = boxRef?.current?.getBoundingClientRect();
     setConstraints(bounds);
-    addListeners(keyMap);
 
     // disable gravity
     const engine = Matter.Engine.create({ gravity: { x: 0, y: 0 } });
@@ -55,10 +63,10 @@ const GamePage = () => {
     const leftWall = Matter.Bodies.rectangle(0, 0, 0, 200, body_config('leftWall'));
     const rightWall = Matter.Bodies.rectangle(0, 0, 0, 200, body_config('rightWall'));
 
-    const boundX = ((bounds?.width ?? 200) / 2);
-    const boundY = ((bounds?.height ?? 200) / 1.2);
+    const boundX = ((bounds?.width ?? 200) / 4);
+    const boundY = ((bounds?.height ?? 200) / 2);
 
-    const player = Matter.Bodies.circle(boundX, (boundY - 150), Constants.PARTICLE_SIZE, player_config('player'));
+    const player = Matter.Bodies.circle(boundX, (boundY), Constants.PARTICLE_SIZE, player_config('player'));
     const elementsComposite = Matter.Composite.create({ label: 'elements' });
 
     Matter.Composite.add(elementsComposite, [floor, ceiling, leftWall, rightWall, player])
@@ -66,101 +74,121 @@ const GamePage = () => {
     Matter.Render.run(render);
 
     setRunner(runner);
-    setScene(render);
+    setRender(render);
     setEngine(engine);
     // trigger one time event setup
     setEvents(false);
-  }, []);
 
+    // dismount
+    return () => {
+      Matter.Events.off(engine, '', () => { });
+      Matter.Events.off(runner, '', () => { });
+      window.removeEventListener('keydown', inputListener);
+    }
+  }, []);
 
   useEffect(() => {
     if (engine) {
       const tickCallback = () => {
-        tickFunciton(engine, constraints)
+        tickFunciton(engine, constraints, gameStage)
       }
       const collisionCallback = (event: Matter.IEventCollision<Matter.Engine>) => {
-        collistionFunction(event, engine)
+        collistionFunction(event, engine, points)
       }
       // remove all previous events
-      Matter.Events.off(engine, '', ()=>{});
-      Matter.Events.off(runner, '', ()=>{});
-      // renwe events with new boundaries
+      Matter.Events.off(engine, '', () => { });
+      Matter.Events.off(runner, '', () => { });
+      // renew events with new boundaries
       Matter.Events.on(engine, 'collisionStart', collisionCallback);
       Matter.Events.on(runner, 'afterTick', tickCallback);
+
+      // handle input
+      window.addEventListener('keydown', inputListener);
       setEvents(true)
     }
-  }, [events, runner, constraints, engine]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [events, runner, constraints, engine, gameStage, points]);
 
-
-  const tickFunciton = (engine: Matter.Engine, constraints: DOMRect | undefined) => {
-    clock += 1;
-
-    // handle player input
-    const player = getBody(engine.world.composites, 'elements', 'player');
-    if (player) {
-      const { x, y } = handleKeypress(keyMap, player);
-
-      Matter.Body.setVelocity(player, {
-        x: Math.min((x), 50),
-        y: (Math.min((y), 50) + 0.6) * 1.08
-      });
-
-      const bounds = boxRef?.current?.getBoundingClientRect();
-      if (bounds) {
-        if (player.position.x > bounds.width || player.position.x < 0 ||
-          player.position.y > bounds.height || player.position.y < 0) {
-          Matter.Body.setPosition(player, { x: 100, y: 100 });
-          Matter.Body.setVelocity(player, { x: 0, y: 0 });
-        }
-      }
-    }
-
-    // main game loop
-    if (!(clock % 50)) {
-      if (constraints && engine) {
-        let { height, width } = constraints;
-        let randomY = Math.floor(Math.random() * -height) + height;
-        let size = Math.floor(Math.random() * 10) + 10;
-
-        const obstacle = Matter.Bodies.circle(width - 10, randomY, size, meteor_config);
-        Matter.World.add(
-          engine.world,
-          obstacle
-        );
-
-        Matter.Body.setVelocity(obstacle, { x: -10, y: 0 });
-      }
-    }
-  }
 
   const collistionFunction = (
     event: Matter.IEventCollision<Matter.Engine>,
-    engine: Matter.Engine
+    engine: Matter.Engine,
+    points: number
   ) => {
     var pairs = event.pairs;
     for (var i = 0, j = pairs.length; i !== j; ++i) {
       var pair = pairs[i];
-      const bullet = pair.bodyB.label === 'bullet' || pair.bodyA.label === 'bullet';
-      const meteor = pair.bodyB.label === 'meteor' || pair.bodyA.label === 'meteor';
+      const obstacle = pair.bodyB.label === 'obstacle' || pair.bodyA.label === 'obstacle';
       const player = pair.bodyB.label === 'player' || pair.bodyA.label === 'player';
-      const floor = pair.bodyB.label === 'floor' || pair.bodyA.label === 'floor';
-      if (bullet) {
-        const bulletBody = pair.bodyA.label === 'bullet' ? pair.bodyA : pair.bodyB;
-        Matter.Composite.remove(engine.world, bulletBody)
+      const leftWall = pair.bodyB.label === 'leftWall' || pair.bodyA.label === 'leftWall';
+      if (obstacle && leftWall) {
+        const obstacleBody = pair.bodyA.label === 'obstacle' ? pair.bodyA : pair.bodyB;
+        Matter.Composite.remove(engine.world, obstacleBody)
+        setPoints((points) => points + 1)
       }
-      if (meteor) {
-        const meteorBody = pair.bodyA.label === 'meteor' ? pair.bodyA : pair.bodyB;
-        Matter.Composite.remove(engine.world, meteorBody)
+      if (obstacle && player) {
+        setGameStage(GameStages.END);
+        console.log('game over');
+        navigate('/game-over', { state: { points: points } });
       }
-      if (meteor && bullet) {
-        setPoints((points) => points + 2)
-      }
-      if (meteor && floor) {
-        setPoints((points) => points - 1)
-      }
-      if (meteor && player) {
-        console.log('game over')
-      }
+    }
+  }
+
+
+  const tickFunciton = (engine: Matter.Engine, constraints: DOMRect | undefined, gameStage: GameStages) => {
+    const player = getBody(engine.world.composites, 'elements', 'player');
+    const bounds = boxRef?.current?.getBoundingClientRect();
+
+    switch (gameStage) {
+      case GameStages.START:
+        break;
+
+      case GameStages.END:
+        break;
+
+      case GameStages.PLAY:
+        clock += 1;
+        if (player) {
+          // handle player input
+          const { x, y } = handleSingleKeypress(clickedUp, player);
+          clickedUp = false;
+
+          Matter.Body.setVelocity(player, {
+            x: Math.min((x), 50),
+            y: (Math.max((y), -30) + 0.6) * 1.08
+          });
+          // handle player bounds
+          if (bounds) {
+            if (player.position.x > bounds.width + 20 || player.position.x < -20 ||
+              player.position.y > bounds.height + 20 || player.position.y < -20) {
+              Matter.Body.setPosition(player, { x: 100, y: 100 });
+              Matter.Body.setVelocity(player, { x: 0, y: 0 });
+            }
+          }
+        }
+
+        var speed = 100;
+        var obstructinSpaces = 200;
+
+        // main game loop
+        if (!(clock % speed)) {
+          // add obstacle
+          if (constraints && engine) {
+            let { height, width } = constraints;
+            let randomY = Math.floor(Math.random() * ((height - 40 - obstructinSpaces))) + 40;
+            const spacer = (randomY) + obstructinSpaces;
+            const bottomHeight = height - spacer;
+
+            const obstacleTop = Matter.Bodies.rectangle(width - 10, randomY / 2, 40, randomY, obstacle_config);
+            const obstacleBottom = Matter.Bodies.rectangle(width - 10, spacer + bottomHeight / 2, 40, bottomHeight, obstacle_config);
+
+            Matter.World.add(engine.world, obstacleTop);
+            Matter.World.add(engine.world, obstacleBottom);
+            Matter.Body.setVelocity(obstacleTop, { x: -5, y: 0 });
+            Matter.Body.setVelocity(obstacleBottom, { x: -5, y: 0 });
+          }
+        }
+        break;
     }
   }
 
@@ -174,11 +202,11 @@ const GamePage = () => {
 
   // update floor controller and scene size on resize
   useEffect(() => {
-    if (constraints && scene && engine) {
+    if (constraints && render && engine) {
       // Update floor and scene size
-      handleResize(scene, engine, constraints);
+      handleResize(render, engine, constraints);
     }
-  }, [scene, constraints, engine]);
+  }, [render, constraints, engine]);
 
   return (
     <div

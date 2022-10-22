@@ -8,6 +8,13 @@ export enum Constants {
 
 export enum Categories {
   DEFAULT = 0x0000,
-  DRAGGABLE = 0x0001,
-  STATIC = 0x0002,
+  OBSTACLE = 0x0001,
+  WALL = 0x0002,
+  PLAYER = 0x0003,
+}
+
+export enum GameStages {
+  START = "START",
+  PLAY = "PLAY",
+  END = "END",
 }
