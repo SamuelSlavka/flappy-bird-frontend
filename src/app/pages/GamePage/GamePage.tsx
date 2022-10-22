@@ -78,14 +78,25 @@ const GamePage = () => {
     setEngine(engine);
     // trigger one time event setup
     setEvents(false);
-
-    // dismount
-    return () => {
-      Matter.Events.off(engine, '', () => { });
-      Matter.Events.off(runner, '', () => { });
-      window.removeEventListener('keydown', inputListener);
-    }
   }, []);
+
+  // cleanup
+  useEffect(() => {
+    return () => {
+      if(render && engine && runner) {
+        window.removeEventListener('keydown', inputListener);
+        Matter.Render.stop(render);
+        Matter.Composite.clear(engine.world, false, true);
+        Matter.Engine.clear(engine);
+        Matter.Runner.stop(runner);
+        render.canvas.remove();
+        window.onresize = null;
+        setRender(undefined);
+        setEngine(undefined);
+        setRunner(undefined);
+      }
+    }
+  },[render, engine, runner])
 
   useEffect(() => {
     if (engine) {
@@ -102,6 +113,10 @@ const GamePage = () => {
       Matter.Events.on(engine, 'collisionStart', collisionCallback);
       Matter.Events.on(runner, 'afterTick', tickCallback);
 
+      window.onresize = () => {
+        const bounds = boxRef?.current?.getBoundingClientRect();
+        setConstraints(bounds);
+      }
       // handle input
       window.addEventListener('keydown', inputListener);
       setEvents(true)
@@ -182,8 +197,8 @@ const GamePage = () => {
             const obstacleTop = Matter.Bodies.rectangle(width - 10, randomY / 2, 40, randomY, obstacle_config);
             const obstacleBottom = Matter.Bodies.rectangle(width - 10, spacer + bottomHeight / 2, 40, bottomHeight, obstacle_config);
 
-            Matter.World.add(engine.world, obstacleTop);
-            Matter.World.add(engine.world, obstacleBottom);
+            Matter.Composite.add(engine.world, obstacleTop);
+            Matter.Composite.add(engine.world, obstacleBottom);
             Matter.Body.setVelocity(obstacleTop, { x: -5, y: 0 });
             Matter.Body.setVelocity(obstacleBottom, { x: -5, y: 0 });
           }
@@ -191,14 +206,6 @@ const GamePage = () => {
         break;
     }
   }
-
-  // initial setup
-  useEffect(() => {
-    window.onresize = () => {
-      const bounds = boxRef?.current?.getBoundingClientRect();
-      setConstraints(bounds);
-    }
-  }, []);
 
   // update floor controller and scene size on resize
   useEffect(() => {
