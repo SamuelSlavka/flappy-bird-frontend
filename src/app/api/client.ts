@@ -4,19 +4,19 @@ type ApiRequestOptions = {
 
 const baseUrl = process.env.REACT_APP_API_URL
 
-export async function client(endpoint: string, options?: ApiRequestOptions) {
+export async function client(endpoint: string, options: ApiRequestOptions) {
   const headers = { 'Content-Type': 'application/json' }
 
   const config = {
-    method: options?.body ? 'POST' : 'GET',
-    ...options?.customConfig,
+    method: options.method,
+    ...options.customConfig,
     headers: {
       ...headers,
-      ...options?.customConfig?.headers,
+      ...options.customConfig?.headers,
     },
   }
-  if (options?.body) {
-    config.body = JSON.stringify(options?.body)
+  if (options.body) {
+    config.body = JSON.stringify(options.body)
   }
 
   let data
@@ -43,5 +43,13 @@ client.get = function (endpoint: string, customConfig = {}) {
 }
 
 client.post = function (endpoint: string, body: any, customConfig = {}) {
-  return client(endpoint, { ...customConfig, body })
+  return client(endpoint, { ...customConfig, method: 'POST', body })
+}
+
+client.put = function (endpoint: string, body: any, customConfig = {}) {
+  return client(endpoint, { ...customConfig, method: 'PUT', body })
+}
+
+client.delete = function (endpoint: string, body: any, customConfig = {}) {
+  return client(endpoint, { ...customConfig, method: 'DELETE', body })
 }

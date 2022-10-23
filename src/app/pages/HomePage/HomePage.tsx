@@ -22,6 +22,12 @@ function HomePage() {
                         <Link to="/game">
                             <NavItem name="Play" icon={solid("play")} />
                         </Link>
+                        <Link to="/login">
+                            <NavItem name="Login" icon={solid("arrow-right-to-bracket")} />
+                        </Link>
+                        <Link to="/admin">
+                            <NavItem name="Admin" icon={solid("gear")} />
+                        </Link>
                     </div>
                 </div>
             </section>

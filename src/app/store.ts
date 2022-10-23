@@ -1,6 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit';
-import lunchReducer from './pages/LunchPage/store/lunchSlice';
-import restaurantReducer from './pages/LunchPage/store/restaurantSlice';
+
+import playerReducer from './pages/GamePage/store/playerSlice';
+import loginReducer from './pages/LoginPage/store/loginSlice';
 import storage from 'redux-persist/lib/storage';
 import {
   persistReducer,
@@ -13,16 +14,16 @@ import {
 } from 'redux-persist';
 
 const persistConfig = {
-  key: 'restaurant',
+  key: 'player',
   storage
 }
 
-const restaurantPeristReducer = persistReducer(persistConfig, restaurantReducer);
+const playerPeristReducer = persistReducer(persistConfig, playerReducer);
 
 const store = configureStore({
   reducer: {
-    lunch: lunchReducer,
-    restaurant: restaurantPeristReducer,
+    player: playerPeristReducer,
+    login: loginReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
