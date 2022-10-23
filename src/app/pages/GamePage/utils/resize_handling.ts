@@ -2,7 +2,7 @@ import Matter from "matter-js";
 import { Constants } from "../enums/gameConstants";
 import { getBody } from "./matterjs_utils";
 
-export const handleResize = (scene: Matter.Render, engine: Matter.Engine, constraints: DOMRect) => {
+export const handleResize = (scene: Matter.Render, engine: Matter.Engine, constraints: DOMRect, Body: typeof Matter.Body) => {
   const { width, height } = constraints;
 
   const composites = engine.world.composites;
@@ -16,17 +16,18 @@ export const handleResize = (scene: Matter.Render, engine: Matter.Engine, constr
   scene.bounds.max.y = height;
   scene.options.width = width;
   scene.options.height = height;
-  scene.canvas.width = width;
-  scene.canvas.height = height;
-
+  if(scene.canvas) {
+    scene.canvas.width = width;
+    scene.canvas.height = height;
+  }
   //update floor location and size
   if (floor) {
-    Matter.Body.setPosition(floor, {
+    Body.setPosition(floor, {
       x: width / 2,
       y: height + Constants.STATIC_DENSITY - 50
     });
 
-    Matter.Body.setVertices(floor, [
+    Body.setVertices(floor, [
       { x: -10, y: height },
       { x: width + 10, y: height },
       { x: width + 10, y: height + Constants.STATIC_DENSITY },
@@ -36,12 +37,12 @@ export const handleResize = (scene: Matter.Render, engine: Matter.Engine, constr
 
   //update cieling location and size
   if (ceiling) {
-    Matter.Body.translate(ceiling, {
+    Body.translate(ceiling, {
       x: width / 2,
       y: 0 - 50
     });
 
-    Matter.Body.setVertices(ceiling, [
+    Body.setVertices(ceiling, [
       { x: -10, y: height },
       { x: width + 10, y: height },
       { x: width + 10, y: height + Constants.STATIC_DENSITY },
@@ -51,12 +52,12 @@ export const handleResize = (scene: Matter.Render, engine: Matter.Engine, constr
 
   //update floor location and size
   if (rightWall) {
-    Matter.Body.setPosition(rightWall, {
+    Body.setPosition(rightWall, {
       x: width + 50,
       y: height / 2
     });
 
-    Matter.Body.setVertices(rightWall, [
+    Body.setVertices(rightWall, [
       { x: width, y: height + 10 },
       { x: width, y: -10 },
       { x: width + Constants.STATIC_DENSITY, y: -10 },
@@ -66,12 +67,12 @@ export const handleResize = (scene: Matter.Render, engine: Matter.Engine, constr
 
   //update floor location and size
   if (leftWall) {
-    Matter.Body.setPosition(leftWall, {
+    Body.setPosition(leftWall, {
       x: -50,
       y: height / 2
     });
 
-    Matter.Body.setVertices(leftWall, [
+    Body.setVertices(leftWall, [
       { x: -Constants.STATIC_DENSITY, y: height + 10 },
       { x: -Constants.STATIC_DENSITY, y: 0 },
       { x: 0, y: -10 },

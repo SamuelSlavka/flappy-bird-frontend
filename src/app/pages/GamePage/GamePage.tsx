@@ -19,14 +19,23 @@ const inputListener = (e: any) => {
   }
 }
 
+var render: Matter.Render | undefined;
+var engine: Matter.Engine | undefined;
+var runner: Matter.Runner | undefined;
+
+const Engine = Matter.Engine;
+const Render = Matter.Render;
+const Runner = Matter.Runner;
+const Composite = Matter.Composite;
+const Events = Matter.Events;
+const Bodies = Matter.Bodies;
+const Body = Matter.Body;
+
 const GamePage = () => {
   const boxRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const [constraints, setConstraints] = useState<DOMRect>();
-  const [render, setRender] = useState<Matter.Render>();
-  const [engine, setEngine] = useState<Matter.Engine>();
-  const [runner, setRunner] = useState<Matter.Runner>();
   const [points, setPoints] = useState<number>(0);
   const [events, setEvents] = useState<boolean>(false);
   const [gameStage, setGameStage] = useState<GameStages>(GameStages.PLAY);
@@ -37,12 +46,12 @@ const GamePage = () => {
   useEffect(() => {
     const bounds = boxRef?.current?.getBoundingClientRect();
     setConstraints(bounds);
+    // create engine 
+    if(!engine) {
+      engine = Engine.create({ gravity: { x: 0, y: 0 } });
+    }
 
-    // disable gravity
-    const engine = Matter.Engine.create({ gravity: { x: 0, y: 0 } });
-    const world = engine.world;
-
-    const render = Matter.Render.create({
+    render = Render.create({
       element: boxRef.current ?? undefined,
       engine: engine,
       canvas: canvasRef.current ?? undefined,
@@ -52,66 +61,64 @@ const GamePage = () => {
       }
     });
 
-    Matter.Render.run(render);
+    Render.run(render);
 
     // create runner
-    var runner = Matter.Runner.create();
-    Matter.Runner.run(runner, engine);
+    if(!runner) {
+      runner = Runner.create();
+    }
+    Runner.run(runner, engine);
 
-    const floor = Matter.Bodies.rectangle(0, 0, 0, 200, body_config('floor'));
-    const ceiling = Matter.Bodies.rectangle(0, 0, 0, 200, body_config('ceiling'));
-    const leftWall = Matter.Bodies.rectangle(0, 0, 0, 200, body_config('leftWall'));
-    const rightWall = Matter.Bodies.rectangle(0, 0, 0, 200, body_config('rightWall'));
+    const floor = Bodies.rectangle(0, 0, 0, 200, body_config('floor'));
+    const ceiling = Bodies.rectangle(0, 0, 0, 200, body_config('ceiling'));
+    const leftWall = Bodies.rectangle(0, 0, 0, 200, body_config('leftWall'));
+    const rightWall = Bodies.rectangle(0, 0, 0, 200, body_config('rightWall'));
 
     const boundX = ((bounds?.width ?? 200) / 4);
     const boundY = ((bounds?.height ?? 200) / 2);
 
-    const player = Matter.Bodies.circle(boundX, (boundY), Constants.PARTICLE_SIZE, player_config('player'));
-    const elementsComposite = Matter.Composite.create({ label: 'elements' });
+    const player = Bodies.circle(boundX, (boundY), Constants.PARTICLE_SIZE, player_config('player'));
+    const elementsComposite = Composite.create({ label: 'elements' });
 
-    Matter.Composite.add(elementsComposite, [floor, ceiling, leftWall, rightWall, player])
-    Matter.Composite.add(world, [elementsComposite]);
-    Matter.Render.run(render);
+    Composite.add(elementsComposite, [floor, ceiling, leftWall, rightWall, player])
+    Composite.add(engine.world, [elementsComposite]);
 
-    setRunner(runner);
-    setRender(render);
-    setEngine(engine);
     // trigger one time event setup
     setEvents(false);
+
   }, []);
 
   // cleanup
   useEffect(() => {
     return () => {
       if(render && engine && runner) {
-        window.removeEventListener('keydown', inputListener);
-        Matter.Render.stop(render);
-        Matter.Composite.clear(engine.world, false, true);
+        Matter.World.clear(engine.world, false);
+        Composite.clear(engine.world, false, true);
         Matter.Engine.clear(engine);
-        Matter.Runner.stop(runner);
-        render.canvas.remove();
+        
+        Render.stop(render);
+        Runner.stop(runner);
+        window.removeEventListener('keydown', inputListener);
         window.onresize = null;
-        setRender(undefined);
-        setEngine(undefined);
-        setRunner(undefined);
       }
     }
-  },[render, engine, runner])
+  },[])
 
   useEffect(() => {
     if (engine) {
+      const localEngine: Matter.Engine = engine;
       const tickCallback = () => {
-        tickFunciton(engine, constraints, gameStage)
+        tickFunciton(localEngine, constraints, gameStage)
       }
       const collisionCallback = (event: Matter.IEventCollision<Matter.Engine>) => {
-        collistionFunction(event, engine, points)
+        collistionFunction(event, localEngine, points)
       }
       // remove all previous events
-      Matter.Events.off(engine, '', () => { });
-      Matter.Events.off(runner, '', () => { });
+      Events.off(engine, '', () => { });
+      Events.off(runner, '', () => { });
       // renew events with new boundaries
-      Matter.Events.on(engine, 'collisionStart', collisionCallback);
-      Matter.Events.on(runner, 'afterTick', tickCallback);
+      Events.on(engine, 'collisionStart', collisionCallback);
+      Events.on(runner, 'afterTick', tickCallback);
 
       window.onresize = () => {
         const bounds = boxRef?.current?.getBoundingClientRect();
@@ -121,8 +128,9 @@ const GamePage = () => {
       window.addEventListener('keydown', inputListener);
       setEvents(true)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [events, runner, constraints, engine, gameStage, points]);
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [events, constraints, gameStage, points]);
 
 
   const collistionFunction = (
@@ -153,7 +161,7 @@ const GamePage = () => {
   const tickFunciton = (engine: Matter.Engine, constraints: DOMRect | undefined, gameStage: GameStages) => {
     const player = getBody(engine.world.composites, 'elements', 'player');
     const bounds = boxRef?.current?.getBoundingClientRect();
-
+    
     switch (gameStage) {
       case GameStages.START:
         break;
@@ -168,7 +176,7 @@ const GamePage = () => {
           const { x, y } = handleSingleKeypress(clickedUp, player);
           clickedUp = false;
 
-          Matter.Body.setVelocity(player, {
+          Body.setVelocity(player, {
             x: Math.min((x), 50),
             y: (Math.max((y), -30) + 0.6) * 1.08
           });
@@ -176,8 +184,8 @@ const GamePage = () => {
           if (bounds) {
             if (player.position.x > bounds.width + 20 || player.position.x < -20 ||
               player.position.y > bounds.height + 20 || player.position.y < -20) {
-              Matter.Body.setPosition(player, { x: 100, y: 100 });
-              Matter.Body.setVelocity(player, { x: 0, y: 0 });
+              Body.setPosition(player, { x: 100, y: 100 });
+              Body.setVelocity(player, { x: 0, y: 0 });
             }
           }
         }
@@ -194,13 +202,13 @@ const GamePage = () => {
             const spacer = (randomY) + obstructinSpaces;
             const bottomHeight = height - spacer;
 
-            const obstacleTop = Matter.Bodies.rectangle(width - 10, randomY / 2, 40, randomY, obstacle_config);
-            const obstacleBottom = Matter.Bodies.rectangle(width - 10, spacer + bottomHeight / 2, 40, bottomHeight, obstacle_config);
+            const obstacleTop = Bodies.rectangle(width - 10, randomY / 2, 40, randomY, obstacle_config);
+            const obstacleBottom = Bodies.rectangle(width - 10, spacer + bottomHeight / 2, 40, bottomHeight, obstacle_config);
 
-            Matter.Composite.add(engine.world, obstacleTop);
-            Matter.Composite.add(engine.world, obstacleBottom);
-            Matter.Body.setVelocity(obstacleTop, { x: -5, y: 0 });
-            Matter.Body.setVelocity(obstacleBottom, { x: -5, y: 0 });
+            Composite.add(engine.world, obstacleTop);
+            Composite.add(engine.world, obstacleBottom);
+            Body.setVelocity(obstacleTop, { x: -5, y: 0 });
+            Body.setVelocity(obstacleBottom, { x: -5, y: 0 });
           }
         }
         break;
@@ -211,9 +219,9 @@ const GamePage = () => {
   useEffect(() => {
     if (constraints && render && engine) {
       // Update floor and scene size
-      handleResize(render, engine, constraints);
+      handleResize(render, engine, constraints, Body);
     }
-  }, [render, constraints, engine]);
+  }, [constraints]);
 
   return (
     <div
