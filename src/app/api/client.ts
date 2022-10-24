@@ -6,13 +6,14 @@ const baseUrl = process.env.REACT_APP_API_URL
 
 export async function client(endpoint: string, options: ApiRequestOptions) {
   const headers = { 'Content-Type': 'application/json' }
-
+  const access_token = localStorage.getItem("access_token");
   const config = {
     method: options.method,
     ...options.customConfig,
     headers: {
       ...headers,
       ...options.customConfig?.headers,
+      Authorization: `Bearer ${access_token}`
     },
   }
   if (options.body) {

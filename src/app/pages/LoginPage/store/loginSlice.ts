@@ -19,6 +19,7 @@ export const loginSlice = createSlice({
             state.access_token = '';
             state.refresh_token = '';
             state.loading = false;
+            localStorage.removeItem("access_token");
             toast.success("Logout successfull", { theme: "dark", autoClose: 2000, pauseOnFocusLoss: false });
         },
     },
@@ -30,6 +31,7 @@ export const loginSlice = createSlice({
             state.access_token = action.payload.access_token ?? '';
             state.refresh_token = action.payload.refresh_token ?? '';
             state.loading = false;
+            localStorage.setItem("access_token", action.payload.access_token ?? '');
             toast.success("Login successfull", { theme: "dark", autoClose: 2000, pauseOnFocusLoss: false });
         })
         builder.addCase(login.rejected, (state) => {
