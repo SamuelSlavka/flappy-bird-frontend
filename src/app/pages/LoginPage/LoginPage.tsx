@@ -10,20 +10,22 @@ function LoginPage() {
 
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [loginTrigger, setLoginTrigger] = useState(false);
 
     const navigate = useNavigate();
     const access_token = useSelector(selectJwt);
 
     const triggerLogin = () => {
         store.dispatch(login({ username, password }));
+        setLoginTrigger(true);
     }
 
     useEffect(() => {
-        console.log(access_token)
-        if(access_token) {
+        if(access_token && loginTrigger) {
+            setLoginTrigger(false);
             navigate('/admin')
         }
-    }, [access_token, navigate])
+    }, [access_token, navigate, loginTrigger])
 
     return (
         <div className="overflow-auto HideScrollbars inline-block relative min-w-full min-h-fit h-full object-cover">

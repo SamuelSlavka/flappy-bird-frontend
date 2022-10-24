@@ -14,7 +14,7 @@ var clock = 1;
 var clickedUp = false;
 
 const inputListener = (e: any) => {
-  if (e.code === 'Space' || e.code === 'KeyW') {
+  if (e.code === 'Space' || e.code === 'KeyW' || e.type === 'touchstart') {
     clickedUp = true;
   }
 }
@@ -99,6 +99,7 @@ const GamePage = () => {
         Render.stop(render);
         Runner.stop(runner);
         window.removeEventListener('keydown', inputListener);
+        window.removeEventListener('touchstart', inputListener);
         window.onresize = null;
       }
     }
@@ -126,6 +127,7 @@ const GamePage = () => {
       }
       // handle input
       window.addEventListener('keydown', inputListener);
+      window.addEventListener('touchstart', inputListener, false);
       setEvents(true)
     }
 

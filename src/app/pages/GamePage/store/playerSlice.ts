@@ -6,7 +6,7 @@ import { PlayerModel, PlayerState } from './playerModel';
 
 const playerAdapter = createEntityAdapter<PlayerModel>({
     selectId: (player) => player.id,
-    sortComparer: (a, b) => a.player_name.localeCompare(b.player_name),
+    sortComparer: (a, b) => a.name.localeCompare(b.name),
 })
 
 const initialState: PlayerState = playerAdapter.getInitialState({
@@ -60,7 +60,7 @@ export const fetchAllPlayers = createAsyncThunk<PlayerModel[]>(
 
 export const upsertPlayer = createAsyncThunk<
     PlayerModel,
-    { id: string } & Partial<PlayerModel>
+    Partial<PlayerModel>
     >(
     'players/add',
     async (playerData) => {

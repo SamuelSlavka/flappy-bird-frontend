@@ -6,8 +6,8 @@ export interface PlayerState extends EntityState<PlayerModel> {
 
 export interface PlayerModel {
     id: string,
-    player_name: string,
-    score: string,
+    name: string,
+    record: string,
 }
 
 export interface UpdatePlayerModel {
