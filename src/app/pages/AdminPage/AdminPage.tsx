@@ -1,7 +1,12 @@
 import { Link } from 'react-router-dom';
+import store from '../../store';
+import { logout } from '../LoginPage/store/loginSlice';
 import styles from './AdminPage.module.scss';
 
 function AdminPage() {
+    const triggerLogout = () => {
+        store.dispatch(logout());
+    }
 
     return (
         <div className="overflow-auto HideScrollbars inline-block relative min-w-full min-h-fit h-full object-cover">
@@ -15,11 +20,12 @@ function AdminPage() {
                     <h1 className={styles.HeaderText}>
                         AdminPage
                     </h1>
-                    <Link to="/game">
-                        <h3 className={styles.PointsText}>
-                        <span>{"Again"}</span>
-                        </h3>
-                    </Link>
+
+                    <button onClick={() => triggerLogout()} className="justify-center w-full" >
+                            <h3 className={`${styles.PointsText} mt-6`}>
+                                <span>{"Logout"}</span>
+                            </h3>
+                        </button>
                 </div>
             </section>
         </div>

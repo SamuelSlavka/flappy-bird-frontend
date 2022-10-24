@@ -2,9 +2,7 @@ import { RootState } from '@app/store';
 import { client } from '../../../api/client';
 import {
     createEntityAdapter, createAsyncThunk, createSelector, createSlice } from '@reduxjs/toolkit';
-import { PlayerModel, PlayerState, UpdatePlayerModel, ValidationErrors } from './playerModel';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { PlayerModel, PlayerState } from './playerModel';
 
 const playerAdapter = createEntityAdapter<PlayerModel>({
     selectId: (player) => player.id,

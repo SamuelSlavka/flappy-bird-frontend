@@ -3,7 +3,6 @@ import store from '../../store';
 import { login, selectJwt } from '../LoginPage/store/loginSlice';
 import styles from './LoginPage.module.scss';
 
-import { ToastContainer, toast } from 'react-toastify';
 import { useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 
@@ -66,8 +65,6 @@ function LoginPage() {
                     </section>
                 </section>
             </section>
-
-            <ToastContainer />
         </div>
     );
 }
