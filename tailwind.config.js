@@ -7,6 +7,7 @@ module.exports = {
       transparent: 'transparent',
       current: 'currentColor',
       'black': '#353535',
+      'night': '#2a303c',
       'dark': '#1d3557',
       'middle': '#457b9d',
       'light': '#a8dadc',
@@ -15,5 +16,5 @@ module.exports = {
     },
 
   },
-  plugins: [],
+  plugins: [require("daisyui")],
 }

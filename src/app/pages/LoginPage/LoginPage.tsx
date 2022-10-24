@@ -1,8 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import store from '../../store';
 import { login, selectJwt } from '../LoginPage/store/loginSlice';
-import styles from './LoginPage.module.scss';
-
 import { useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 
@@ -38,9 +36,11 @@ function LoginPage() {
                 <section className='grid h-full'>
                     <section className="place-self-center w-fit">
                         <form className='flex flex-col w-fit justify-center'>
-                            <label> Username: </label>
+                            <label className="label">
+                                <span className="label-text text-white">Username</span>
+                            </label>
                             <input
-                                className='text-black rounded p-1'
+                                className='input input-bordered w-full max-w-xs inputField'
                                 type="text"
                                 name="username"
                                 value={username}
@@ -48,9 +48,11 @@ function LoginPage() {
                                 placeholder="Username"
                                 required
                             />
-                            <label className='mt-4'> Password: </label>
+                            <label className="label">
+                                <span className="label-text text-white">Password</span>
+                            </label>
                             <input
-                                className='text-black rounded p-1'
+                                className='input input-bordered w-full max-w-xs inputField'
                                 type="password"
                                 name="password"
                                 value={password}
@@ -59,10 +61,8 @@ function LoginPage() {
                                 required
                             />
                         </form>
-                        <button onClick={() => triggerLogin()} className="justify-center w-full" >
-                            <h3 className={`${styles.PointsText} mt-6`}>
-                                <span>{"Login"}</span>
-                            </h3>
+                        <button onClick={() => triggerLogin()} className="btn btn-primary justify-center mt-4 float-right" >
+                            <span>{"Login"}</span>
                         </button>
                     </section>
                 </section>

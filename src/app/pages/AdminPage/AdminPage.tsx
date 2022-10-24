@@ -1,14 +1,18 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import { Menu, Transition } from '@headlessui/react';
-import { Fragment, useEffect } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import store from '../../store';
-import { fetchAllPlayers, selectPlayers, upsertPlayer } from '../GamePage/store/playerSlice';
+import { PlayerModel } from '../GamePage/store/playerModel';
+import { deletePlayer, fetchAllPlayers, selectPlayers, upsertPlayer } from '../GamePage/store/playerSlice';
 import { logout } from '../LoginPage/store/loginSlice';
 import styles from './AdminPage.module.scss';
 
 function AdminPage() {
     const players = useSelector(selectPlayers);
+    const [dropdownOpen, setDropdownState] = useState(false);
+    const [selectedPlayer, setSelectedPlayer] = useState<Partial<PlayerModel> | undefined>();
 
     const triggerLogout = () => {
         store.dispatch(logout());
@@ -16,18 +20,26 @@ function AdminPage() {
 
     useEffect(() => {
         store.dispatch(fetchAllPlayers());
-        // store.dispatch((upsertPlayer({
-        //     name: 'name2',
-        //     record: '2323'
-        // })));
     }, [])
 
-    const editPlayer = (id: string) => {
-        console.log(id)
+    const addPlayer = () => {
+        store.dispatch((upsertPlayer({
+            name: 'name22',
+            record: '232333'
+        })));
     }
 
-    const deletePlayer = (id: string) => {
-        console.log(id)
+    const triggerEdit = (player: Partial<PlayerModel> | undefined) => {
+        if (player?.id) {
+            store.dispatch((upsertPlayer({ ...player })));
+        }
+
+    }
+
+    const triggerDelete = (id: string | undefined) => {
+        if (id) {
+            store.dispatch((deletePlayer({ id })));
+        }
     }
 
     return (
@@ -49,52 +61,53 @@ function AdminPage() {
                     <h1 className={styles.HeaderText}>
                         AdminPage
                     </h1>
+                    <section className="grid grid-cols-1 pb-8 text-center hover:text-light ease-in-out duration-200;">
+                        <button className="btn btn-primary place-self-center" onClick={() => addPlayer()} >
+                            Add a player
+                        </button>
+                    </section>
                     {
                         players.map(player =>
                             <section key={player.id} className="grid grid-cols-2 pb-8 text-center font-bold hover:text-light ease-in-out duration-200;">
-                                <span className='text-white place-self-end pb-2'>{player.name}  -  {player.record}</span>
+                                <span className='text-white place-self-end pb-4'>
+                                    <span className='mr-8'>{player.name}</span>
+                                    <span>{player.record}</span>
+                                </span>
                                 <div className="w-24 ml-8 text-right place-self-start">
-                                    <Menu as="div" className="relative inline-block text-left">
-                                        <div>
-                                            <Menu.Button className="inline-flex w-full justify-center rounded-md bg-white px-4 py-2 text-sm font-medium text-black hover:bg-black hover:border-white border-2 hover:text-white focus-visible:ring-2 focus-visible:ring-white">
-                                                Options
-                                            </Menu.Button>
-                                        </div>
-                                        <Transition
-                                            as={Fragment}
-                                            enter="transition ease-out duration-100"
-                                            enterFrom="transform opacity-0 scale-95"
-                                            enterTo="transform opacity-100 scale-100"
-                                            leave="transition ease-in duration-75"
-                                            leaveFrom="transform opacity-100 scale-100"
-                                            leaveTo="transform opacity-0 scale-95"
-                                        >
-                                            <Menu.Items className="z-10 absolute right-0 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                                                <div className="px-1 py-1 ">
-                                                    <Menu.Item>
-                                                        <button onClick={() => editPlayer(player.id)}
-                                                            className='text-dark hover:text-white hover:bg-black group flex w-full items-center rounded-md px-2 py-2 text-sm'
-                                                        >
-                                                            Edit
-                                                        </button>
+                                    <div className={`dropdown`}>
+                                        <label tabIndex={0} className="btn m-1" onClick={() => { setDropdownState(!dropdownOpen) }}>Actions</label>
+                                        <ul tabIndex={0} className="dropdown-content menu bg-night p-2 shadow rounded-box w-52">
+                                            <label onClick={() => { setSelectedPlayer(player) }} htmlFor="edit-modal" className="btn modal-button btn-ghost text-start justify-start">
+                                                Edit
+                                            </label>
 
-                                                    </Menu.Item>
-                                                    <Menu.Item>
-                                                        <button onClick={() => deletePlayer(player.id)}
-                                                            className='text-dark hover:text-white hover:bg-black group flex w-full items-center rounded-md px-2 py-2 text-sm'
-                                                        >
-                                                            Delete
-                                                        </button>
-                                                    </Menu.Item>
-                                                </div>
-                                            </Menu.Items>
-                                        </Transition>
-                                    </Menu>
+                                            <label onClick={() => { setSelectedPlayer(player) }} htmlFor="delete-modal" className="btn modal-button btn-ghost text-start justify-start">
+                                                Delete
+                                            </label>
+                                        </ul>
+                                    </div>
                                 </div>
                             </section>
                         )}
                 </div>
             </section>
+            <input type="checkbox" id="delete-modal" className="modal-toggle" />
+            <label htmlFor="delete-modal" className="modal cursor-pointer">
+                <label className="modal-box relative">
+                    <span className="text-md">Are you sure you want to delete this player?</span>
+                    <label htmlFor="delete-modal" className="btn btn-secondary float-right mt-4" onClick={() => triggerDelete(selectedPlayer?.id)}>Delete</label>
+                </label>
+            </label>
+
+            <input type="checkbox" id="edit-modal" className="modal-toggle" />
+            <label htmlFor="edit-modal" className="modal cursor-pointer">
+                <label className="modal-box relative">
+                    <h3 className="text-md font-bold">{selectedPlayer?.id}</h3>
+                    <p className="py-4">{selectedPlayer?.name}</p>
+                    <p className="py-4">{selectedPlayer?.record}</p>
+                    <label htmlFor="edit-modal" className="btn btn-primary float-right" onClick={() => triggerEdit(selectedPlayer)}>Save</label>
+                </label>
+            </label>
         </div>
     );
 }

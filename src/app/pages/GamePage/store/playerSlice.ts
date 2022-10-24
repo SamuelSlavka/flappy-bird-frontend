@@ -22,7 +22,7 @@ export const playerSlice = createSlice({
             state.loading = true;
         })
         builder.addCase(fetchAllPlayers.fulfilled, (state, action) => {
-            state = playerAdapter.upsertMany(state, action.payload);
+            state = playerAdapter.setAll(state, action.payload);
             state.loading = false;
         })
 
@@ -30,14 +30,15 @@ export const playerSlice = createSlice({
             state.loading = true;
         })
         builder.addCase(upsertPlayer.fulfilled, (state, action) => {
+            console.log(action)
             state = playerAdapter.upsertOne(state, action.payload);
             state.loading = false;
         })
 
-        builder.addCase(removePlayer.pending, (state) => {
+        builder.addCase(deletePlayer.pending, (state) => {
             state.loading = true;
         })
-        builder.addCase(removePlayer.fulfilled, (state, action) => {
+        builder.addCase(deletePlayer.fulfilled, (state, action) => {
             state = playerAdapter.removeOne(state, action.payload.id);
             state.loading = false;
         })
@@ -69,13 +70,13 @@ export const upsertPlayer = createAsyncThunk<
     }
 )
 
-export const removePlayer = createAsyncThunk<
+export const deletePlayer = createAsyncThunk<
     PlayerModel,
     { id: string }
     >(
     'players/remove',
-    async (thunkAPI) => {
-        const response = await client.delete('players', {thunkAPI});
+    async ({id}) => {
+        const response = await client.delete(`players/${id}`, {});
         return response.data
     }
 )
