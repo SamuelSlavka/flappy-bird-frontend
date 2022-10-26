@@ -1,6 +1,4 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import { solid } from '@fortawesome/fontawesome-svg-core/import.macro';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
@@ -8,9 +6,12 @@ import store from '../../store/store';
 import { PlayerModel } from '../GamePage/store/playerModel';
 import { deletePlayer, fetchAllPlayers, selectPage, selectAllPlayers, selectTotalItems, setPage, upsertPlayer } from '../GamePage/store/playerSlice';
 import { logout } from '../LoginPage/store/loginSlice';
+import Play from './components/Play/Play';
+import FormModal from './components/FormModal/FormModal';
+import ConfirmationModal from './components/ConfirmationModal/ConfirmationModal';
 
 function AdminPage() {
-    const pageLimit = 10;
+    const pageLimit = 8;
 
     const players: PlayerModel[] = useSelector(selectAllPlayers);
     const page: number = useSelector(selectPage);
@@ -69,74 +70,16 @@ function AdminPage() {
 
                     <div className="flex justify-center pt-4">
                         <section className='w-xs max-w-fit'>
-                            {players.map(player =>
-                                <section key={player.id} className="grid content-between grid-cols-3 pb-8 text-center font-bold hover:text-light ease-in-out duration-200;">
-                                    <span className='text-white place-self-end pb-4'>
-                                        <span className='mr-8'>{player.name}</span>
-                                    </span>
-                                    <span className='text-white place-self-end pb-4'>
-                                        <span>{player.record}</span>
-                                    </span>
-                                    <div className="w-24 ml-4">
-                                        <div className={`dropdown`}>
-                                            <label tabIndex={0} className="btn m-1" >
-                                                <FontAwesomeIcon icon={solid('chevron-down')} />
-                                            </label>
-                                            <ul tabIndex={0} className="dropdown-content menu bg-night p-2 shadow rounded-box w-52">
-                                                <label onClick={() => { setSelectedPlayer(player) }} htmlFor="edit-modal" className="btn modal-button btn-ghost text-start justify-start">
-                                                    Edit
-                                                </label>
-
-                                                <label onClick={() => { setSelectedPlayer(player) }} htmlFor="delete-modal" className="btn modal-button btn-ghost text-start justify-start">
-                                                    Delete
-                                                </label>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </section>)}
+                            {players.map(player => <Play player={player} setSelectedPlayer={setSelectedPlayer} />)}
                         </section>
                     </div>
                 </div>
             </section>
             <input type="checkbox" id="delete-modal" className="modal-toggle" />
-            <label htmlFor="delete-modal" className="modal cursor-pointer">
-                <label className="modal-box relative">
-                    <span className="text-md">Are you sure you want to delete this player?</span>
-                    <label htmlFor="delete-modal" className="btn btn-secondary float-right mt-4" onClick={() => triggerDelete(selectedPlayer?.id)}>Delete</label>
-                </label>
-            </label>
+            <ConfirmationModal selectedPlayer={selectedPlayer} triggerDelete={triggerDelete} />
             <input type="checkbox" id="edit-modal" className="modal-toggle" />
-            <label htmlFor="edit-modal" className="modal cursor-pointer">
-                <label className="modal-box relative">
-                    <h3 className="text-md font-bold">Player {selectedPlayer?.id}</h3>
+            <FormModal selectedPlayer={selectedPlayer} handleChange={handleChange} triggerUpsert={triggerUpsert} />
 
-                    <label className="label">
-                        <span className="label-text text-white">name</span>
-                    </label>
-                    <input
-                        className='input input-bordered w-full max-w-xs inputField'
-                        type="text"
-                        name="name"
-                        value={selectedPlayer?.name || ''}
-                        onChange={handleChange}
-                        placeholder="name"
-                        required
-                    />
-                    <label className="label">
-                        <span className="label-text text-white">name</span>
-                    </label>
-                    <input
-                        className='input input-bordered w-full max-w-xs inputField'
-                        type="text"
-                        name="record"
-                        value={selectedPlayer?.record || ''}
-                        onChange={handleChange}
-                        placeholder="123"
-                        required
-                    />
-                    <label htmlFor="edit-modal" className="btn btn-primary float-right" onClick={() => triggerUpsert(selectedPlayer)}>Save</label>
-                </label>
-            </label>
             <div className='w-full flex justify-items-center justify-center justify-self-end mb-4'>
                 <div className="btn-group justify-self-center">
                     <button className="btn" disabled={page === 0} onClick={() => store.dispatch(setPage({ page: page - 1 }))}>«</button>
