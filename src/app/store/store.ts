@@ -1,7 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit';
 
-import playerReducer from './pages/GamePage/store/playerSlice';
-import loginReducer from './pages/LoginPage/store/loginSlice';
+import playerReducer from '../pages/GamePage/store/playerSlice';
+import loginReducer from '../pages/LoginPage/store/loginSlice';
 import storage from 'redux-persist/lib/storage';
 import {
   persistReducer,

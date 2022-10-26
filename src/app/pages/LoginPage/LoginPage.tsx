@@ -1,5 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom';
-import store from '../../store';
+import store from '../../store/store';
 import { login, selectJwt } from '../LoginPage/store/loginSlice';
 import { useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';

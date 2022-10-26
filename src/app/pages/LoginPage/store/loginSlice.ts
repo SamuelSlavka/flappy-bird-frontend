@@ -1,4 +1,4 @@
-import { RootState } from '@app/store';
+import { RootState } from '@app/store/store';
 import { client } from '../../../api/client';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { LoginParams, LoginState } from './loginModel';

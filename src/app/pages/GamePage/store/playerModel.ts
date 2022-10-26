@@ -1,6 +1,9 @@
 import { EntityState } from "@reduxjs/toolkit";
 
 export interface PlayerState extends EntityState<PlayerModel> {
+    page: number,
+    page_total: number,
+    total: number,
     loading: boolean;
 }
 

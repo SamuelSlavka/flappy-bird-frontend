@@ -1,5 +1,5 @@
 import Matter from "matter-js";
-import { LocationChange } from "../models/input_interfaces";
+import { LocationChange } from "../models/input.interfaces";
 
 export const handleSingleKeypress = (input: boolean, player: Matter.Body): LocationChange => {
   var x = player?.velocity?.x;

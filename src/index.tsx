@@ -8,7 +8,7 @@ import { persistStore } from 'redux-persist'
 
 import "./index.scss";
 import Router from "./app/router/router";
-import store from "./app/store";
+import store from "./app/store/store";
 import { ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 

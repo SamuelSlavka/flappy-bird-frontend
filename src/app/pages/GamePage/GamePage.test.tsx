@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
 import React from "react";
-import store from "src/app/store";
+import store from "@app/store/store";
 import { BrowserRouter } from "react-router-dom";
 import { Provider } from "react-redux";
 
