@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { PlayerModel } from '../../../GamePage/store/playerModel';
+import { PlayerModel } from '../../../pages/GamePage/store/playerModel';
 
 interface ConfirmationModalProps {
   selectedPlayer: Partial<PlayerModel> | undefined;

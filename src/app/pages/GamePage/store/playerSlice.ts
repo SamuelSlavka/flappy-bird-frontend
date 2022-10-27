@@ -1,8 +1,8 @@
 import { RootState } from '@app/store/store';
 import { client } from '../../../api/client';
-import { PlayerModel, PlayerState } from './playerModel';
+import { ClosestQuery, PlayerModel, PlayerState } from './playerModel';
 import { Paginate } from '../../../store/models';
-import { createEntityAdapter, createAsyncThunk, createSlice, PayloadAction, EntityAdapter } from '@reduxjs/toolkit';
+import { createEntityAdapter, createAsyncThunk, createSlice, PayloadAction, EntityAdapter, isAnyOf } from '@reduxjs/toolkit';
 import { PaginationQuery } from '../../../api/models';
 import { toast } from 'react-toastify';
 
@@ -13,9 +13,10 @@ const playerAdapter: EntityAdapter<PlayerModel> = createEntityAdapter<PlayerMode
 
 const initialState: PlayerState = playerAdapter.getInitialState({
     page: 0,
-    page_total: 0,
     total: 0,
     loading: false,
+    bestPlay: {name: '', record: '0'},
+    closestPlayer: undefined
 });
 
 export const playerSlice = createSlice({
@@ -25,39 +26,51 @@ export const playerSlice = createSlice({
         setPage: (state: PlayerState, action: PayloadAction<{ page: number }>) => {
             state.page = action.payload.page;
         },
+        recordBestPlay: (state: PlayerState, action: PayloadAction<{ name?: string, record: number }>) => {
+            state.bestPlay.name = action.payload.name ? action.payload.name : state.bestPlay.name;
+            state.bestPlay.record = (action.payload.record > +(state.bestPlay.record ?? 0)) ? action.payload.record.toString() : state.bestPlay.record;
+        },
     },
     extraReducers: (builder) => {
-        builder.addCase(fetchAllPlayers.pending, (state) => {
-            state.loading = true;
-        })
         builder.addCase(fetchAllPlayers.fulfilled, (state, action) => {
             state = playerAdapter.setAll(state, action.payload.results);
             state.total = action.payload.total;
-            state.page_total = action.payload.page_total;
             state.loading = false;
         })
 
-        builder.addCase(upsertPlayer.pending, (state) => {
+        builder.addCase(getClosestPlayer.pending, (state) => {
             state.loading = true;
         })
+
+        builder.addCase(getClosestPlayer.fulfilled, (state, action) => {
+            state.closestPlayer = action.payload;
+            state.loading = false;
+        })
+
         builder.addCase(upsertPlayer.fulfilled, (state, action) => {
             state = playerAdapter.upsertOne(state, action.payload);
+            state.bestPlay.id = action.payload.id;
             toast.success("Edit successfull", { theme: "dark", autoClose: 2000, pauseOnFocusLoss: false });
             state.loading = false;
         })
 
-        builder.addCase(deletePlayer.pending, (state) => {
-            state.loading = true;
-        })
         builder.addCase(deletePlayer.fulfilled, (state, action) => {
             state = playerAdapter.removeOne(state, action.payload.id);
             toast.success("Delete successfull", { theme: "dark", autoClose: 2000, pauseOnFocusLoss: false });
             state.loading = false;
         })
+
+        builder.addMatcher(isAnyOf (getClosestPlayer.rejected, fetchAllPlayers.rejected, deletePlayer.rejected), (state) => {
+            state.loading = false;
+        })
+
+        builder.addMatcher(isAnyOf (upsertPlayer.pending, fetchAllPlayers.pending, deletePlayer.pending), (state) => {
+            state.loading = true;
+        })
     }
 });
 
-export const { setPage } = playerSlice.actions;
+export const { setPage, recordBestPlay } = playerSlice.actions;
 
 export const {
     selectById: selectPlayerById,
@@ -78,13 +91,31 @@ export const fetchAllPlayers = createAsyncThunk<
     }
 )
 
+export const getClosestPlayer = createAsyncThunk<
+    PlayerModel,
+    ClosestQuery
+    >(
+    'players/closest',
+    async (query) => {
+        var queries = query.record ? `record=${query.record}` : '';
+        const response = await client.get(`players/closest?${queries}`);
+        return response.data
+    }
+)
+
 export const upsertPlayer = createAsyncThunk<
     PlayerModel,
     { player: Partial<PlayerModel>, page?: number, limit?: number }
     >(
     'players/add',
     async ({player, page, limit}, {dispatch}) => {
-        const response = await client.post('players', player);
+        const {id, ...body} = player
+        var response;
+        if(player.id) {
+            response = await client.post(`players/${player.id}`, body);
+        } else {
+            response = await client.post(`players`, body);
+        }
         dispatch(fetchAllPlayers({page, limit}))
         return response.data
     }
@@ -102,8 +133,18 @@ export const deletePlayer = createAsyncThunk<
     }
 )
 
+export const selectBestPlay = (state: RootState) =>
+    {return {
+        name: state.player.bestPlay.name, 
+        record: state.player.bestPlay.record,
+        id: state.player.bestPlay.id
+    }}
+
 export const selectPage = (state: RootState) =>
     state.player.page;
+
+export const selectClosestPlayer = (state: RootState) =>
+    state.player.closestPlayer;
 
 export const selectTotalItems = (state: RootState) =>
     state.player.total;

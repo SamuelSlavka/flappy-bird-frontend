@@ -6,9 +6,9 @@ import store from '../../store/store';
 import { PlayerModel } from '../GamePage/store/playerModel';
 import { deletePlayer, fetchAllPlayers, selectPage, selectAllPlayers, selectTotalItems, setPage, upsertPlayer } from '../GamePage/store/playerSlice';
 import { logout } from '../LoginPage/store/loginSlice';
-import Play from './components/Play/Play';
-import FormModal from './components/FormModal/FormModal';
-import ConfirmationModal from './components/ConfirmationModal/ConfirmationModal';
+import Play from '../../shared/components/Play/Play';
+import FormModal from '../../shared/components/FormModal/FormModal';
+import ConfirmationModal from '../../shared/components/ConfirmationModal/ConfirmationModal';
 
 function AdminPage() {
     const pageLimit = 8;
@@ -30,7 +30,7 @@ function AdminPage() {
 
     const triggerUpsert = (player: Partial<PlayerModel> | undefined) => {
         store.dispatch((upsertPlayer({
-            player: { name: player?.name, record: player?.record?.toString() },
+            player: { id: player?.id, name: player?.name, record: player?.record?.toString() },
             page,
             limit: pageLimit,
         })));
@@ -51,7 +51,7 @@ function AdminPage() {
         <div className="overflow-auto HideScrollbars relative min-w-full min-h-fit h-full object-cover flex flex-col justify-between">
             <section className="LinkTopContainer">
                 <Link to="/" className='LinkTop'>
-                    <span>{"< home"}</span>
+                    <span>{"< back"}</span>
                 </Link>
             </section>
             <section className="LinkTopContainer AlignLeft">
@@ -70,7 +70,7 @@ function AdminPage() {
 
                     <div className="flex justify-center pt-4">
                         <section className='w-xs max-w-fit'>
-                            {players.map(player => <Play player={player} setSelectedPlayer={setSelectedPlayer} />)}
+                            {players.map(player => <Play key={player.id} player={player} setSelectedPlayer={setSelectedPlayer} isAdmin={true} />)}
                         </section>
                     </div>
                 </div>
@@ -78,7 +78,7 @@ function AdminPage() {
             <input type="checkbox" id="delete-modal" className="modal-toggle" />
             <ConfirmationModal selectedPlayer={selectedPlayer} triggerDelete={triggerDelete} />
             <input type="checkbox" id="edit-modal" className="modal-toggle" />
-            <FormModal selectedPlayer={selectedPlayer} handleChange={handleChange} triggerUpsert={triggerUpsert} />
+            <FormModal selectedPlayer={selectedPlayer} handleChange={handleChange} triggerUpsert={triggerUpsert} isAdmin={true} />
 
             <div className='w-full flex justify-items-center justify-center justify-self-end mb-4'>
                 <div className="btn-group justify-self-center">

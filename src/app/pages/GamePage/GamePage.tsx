@@ -14,9 +14,7 @@ var clock = 1;
 var clickedUp = false;
 
 const inputListener = (e: any) => {
-  if (e.code === 'Space' || e.code === 'KeyW' || e.type === 'touchstart') {
-    clickedUp = true;
-  }
+  clickedUp = true;
 }
 
 var render: Matter.Render | undefined;
@@ -38,7 +36,7 @@ const GamePage = () => {
   const [constraints, setConstraints] = useState<DOMRect>();
   const [points, setPoints] = useState<number>(0);
   const [events, setEvents] = useState<boolean>(false);
-  const [gameStage, setGameStage] = useState<GameStages>(GameStages.PLAY);
+  const [gameStage, setGameStage] = useState<GameStages>(GameStages.START);
 
   const navigate = useNavigate();
 
@@ -47,7 +45,7 @@ const GamePage = () => {
     const bounds = boxRef?.current?.getBoundingClientRect();
     setConstraints(bounds);
     // create engine 
-    if(!engine) {
+    if (!engine) {
       engine = Engine.create({ gravity: { x: 0, y: 0 } });
     }
 
@@ -64,7 +62,7 @@ const GamePage = () => {
     Render.run(render);
 
     // create runner
-    if(!runner) {
+    if (!runner) {
       runner = Runner.create();
     }
     Runner.run(runner, engine);
@@ -91,11 +89,11 @@ const GamePage = () => {
   // cleanup
   useEffect(() => {
     return () => {
-      if(render && engine && runner) {
+      if (render && engine && runner) {
         Matter.World.clear(engine.world, false);
         Composite.clear(engine.world, false, true);
         Matter.Engine.clear(engine);
-        
+
         Render.stop(render);
         Runner.stop(runner);
         window.removeEventListener('keydown', inputListener);
@@ -103,7 +101,7 @@ const GamePage = () => {
         window.onresize = null;
       }
     }
-  },[])
+  }, [])
 
   useEffect(() => {
     if (engine) {
@@ -125,13 +123,14 @@ const GamePage = () => {
         const bounds = boxRef?.current?.getBoundingClientRect();
         setConstraints(bounds);
       }
+
       // handle input
       window.addEventListener('keydown', inputListener);
       window.addEventListener('touchstart', inputListener, false);
-      setEvents(true)
+      setEvents(true);
     }
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [events, constraints, gameStage, points]);
 
 
@@ -163,12 +162,16 @@ const GamePage = () => {
   const tickFunciton = (engine: Matter.Engine, constraints: DOMRect | undefined, gameStage: GameStages) => {
     const player = getBody(engine.world.composites, 'elements', 'player');
     const bounds = boxRef?.current?.getBoundingClientRect();
-    
+
     switch (gameStage) {
       case GameStages.START:
+        if (clickedUp) {
+          setGameStage(GameStages.PLAY);
+        }
         break;
 
       case GameStages.END:
+        clickedUp = false;
         break;
 
       case GameStages.PLAY:
@@ -200,7 +203,9 @@ const GamePage = () => {
           // add obstacle
           if (constraints && engine) {
             let { height, width } = constraints;
-            let randomY = Math.floor(Math.random() * ((height - 40 - obstructinSpaces))) + 40;
+            const playHeight = Math.min(height, 800);
+            const playMargins = (height - playHeight)/2
+            let randomY = Math.floor(Math.random() * ((Math.min(playHeight, 800) - 40 - playMargins - obstructinSpaces))) + 40 + playMargins;
             const spacer = (randomY) + obstructinSpaces;
             const bottomHeight = height - spacer;
 
@@ -234,12 +239,35 @@ const GamePage = () => {
         height: '100%'
       }}
       className="bg-black"
+      onClick={() => setGameStage(GameStages.PLAY)}
     >
-      <section className="LinkTopContainer">
-        <Link to="/" className='LinkTop'>
-          <span>{"< home"}</span>
-        </Link>
-      </section>
+      {gameStage !== GameStages.PLAY ?
+        <>
+          <section className="LinkTopContainer">
+            <section className="min-w-fit mr-4">
+              <a href="https://gitlab.com/SamuelSlavka/game">
+                <span className='LinkTop'>{"git repo"}</span>
+              </a>
+            </section>
+            <section className="min-w-fit mr-2">
+              <Link to="/admin" className='LinkTop'>
+                <span>{"admin"}</span>
+              </Link>
+            </section>
+          </section>
+          <section className='grid h-full'>
+            <section className="place-self-center w-fit">
+              <section className="pt-24 text-center text-l font-bold hover:text-light ease-in-out duration-200">
+                <p className='mb-8 text-2xl'>Press anything to start </p>
+                <p className='mb-2'> controll with keyboad/touchscreen </p>
+                <p> roof and floor bounce!! </p>
+              </section>
+            </section>
+          </section>
+          </>
+        :
+        <></>
+      }
 
       <section className='LinkTopContainer AlignLeft' >
         {`points: ${points}`}
