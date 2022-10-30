@@ -1,20 +1,12 @@
 {
   "ipcMode": null,
-  "executionRoleArn": "arn:aws:iam::729874466502:role/ecsTaskExecutionRole",
+  "executionRoleArn": null,
   "containerDefinitions": [
     {
       "dnsSearchDomains": null,
       "environmentFiles": null,
-      "logConfiguration": {
-        "logDriver": "awslogs",
-        "secretOptions": null,
-        "options": {
-          "awslogs-group": "/ecs/frontend-deploy",
-          "awslogs-region": "eu-central-1",
-          "awslogs-stream-prefix": "ecs"
-        }
-      },
-      "entryPoint": [],
+      "logConfiguration": null,
+      "entryPoint": null,
       "portMappings": [
         {
           "hostPort": 80,
@@ -22,7 +14,7 @@
           "containerPort": 80
         }
       ],
-      "command": [],
+      "command": null,
       "linuxParameters": null,
       "cpu": 0,
       "environment": [],
@@ -37,7 +29,7 @@
       "memoryReservation": null,
       "volumesFrom": [],
       "stopTimeout": null,
-      "image": "adytaveras/react-test:latest",
+      "image": "729874466502.dkr.ecr.eu-central-1.amazonaws.com/game-frontend",
       "startTimeout": null,
       "firelensConfiguration": null,
       "dependsOn": null,
@@ -45,7 +37,7 @@
       "interactive": null,
       "healthCheck": null,
       "essential": true,
-      "links": [],
+      "links": null,
       "hostname": null,
       "extraHosts": null,
       "pseudoTerminal": null,
@@ -58,54 +50,30 @@
     }
   ],
   "placementConstraints": [],
-  "memory": "512",
+  "memory": "128",
   "taskRoleArn": null,
   "compatibilities": [
-    "EC2",
-    "FARGATE"
+    "EXTERNAL",
+    "EC2"
   ],
-  "taskDefinitionArn": "arn:aws:ecs:eu-central-1:729874466502:task-definition/frontend-deploy:1",
-  "family": "frontend-deploy",
+  "taskDefinitionArn": "arn:aws:ecs:eu-central-1:729874466502:task-definition/DeployFrontend:6",
+  "family": "DeployFrontend",
   "requiresAttributes": [
     {
       "targetId": null,
       "targetType": null,
       "value": null,
-      "name": "com.amazonaws.ecs.capability.logging-driver.awslogs"
-    },
-    {
-      "targetId": null,
-      "targetType": null,
-      "value": null,
-      "name": "ecs.capability.execution-role-awslogs"
-    },
-    {
-      "targetId": null,
-      "targetType": null,
-      "value": null,
-      "name": "com.amazonaws.ecs.capability.docker-remote-api.1.19"
-    },
-    {
-      "targetId": null,
-      "targetType": null,
-      "value": null,
-      "name": "com.amazonaws.ecs.capability.docker-remote-api.1.18"
-    },
-    {
-      "targetId": null,
-      "targetType": null,
-      "value": null,
-      "name": "ecs.capability.task-eni"
+      "name": "com.amazonaws.ecs.capability.ecr-auth"
     }
   ],
   "pidMode": null,
   "requiresCompatibilities": [
-    "FARGATE"
+    "EC2"
   ],
-  "networkMode": "awsvpc",
+  "networkMode": null,
   "runtimePlatform": null,
-  "cpu": "256",
-  "revision": 1,
+  "cpu": "1024",
+  "revision": 6,
   "status": "ACTIVE",
   "inferenceAccelerators": null,
   "proxyConfiguration": null,
