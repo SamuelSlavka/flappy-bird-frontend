@@ -46,7 +46,7 @@
       "dockerLabels": null,
       "systemControls": null,
       "privileged": null,
-      "name": "FrontendContainer"
+      "name": "game-frontend"
     }
   ],
   "placementConstraints": [],
@@ -56,8 +56,8 @@
     "EXTERNAL",
     "EC2"
   ],
-  "taskDefinitionArn": "arn:aws:ecs:eu-central-1:729874466502:task-definition/DeployFrontend:6",
-  "family": "DeployFrontend",
+  "taskDefinitionArn": "arn:aws:ecs:eu-central-1:729874466502:task-definition/DeployContainer:4",
+  "family": "DeployContainer",
   "requiresAttributes": [
     {
       "targetId": null,
@@ -73,7 +73,7 @@
   "networkMode": null,
   "runtimePlatform": null,
   "cpu": "1024",
-  "revision": 6,
+  "revision": 4,
   "status": "ACTIVE",
   "inferenceAccelerators": null,
   "proxyConfiguration": null,
