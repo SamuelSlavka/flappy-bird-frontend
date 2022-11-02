@@ -2,7 +2,7 @@ type ApiRequestOptions = {
     [key: string]: any;
 };
 
-const baseUrl = 'https://game.sam-sla.net/api/' // process.env.REACT_APP_API_URL
+const baseUrl = process.env.REACT_APP_API_URL || 'localhost:5000';
 
 export async function client(endpoint: string, options: ApiRequestOptions) {
   const headers = { 'Content-Type': 'application/json' }

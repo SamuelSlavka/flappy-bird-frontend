@@ -1,104 +1,109 @@
 {
-  "taskDefinitionArn": "arn:aws:ecs:eu-central-1:729874466502:task-definition/game-frontend-task:10",
-  "containerDefinitions": [
-      {
-          "name": "game-frontend",
-          "image": "729874466502.dkr.ecr.eu-central-1.amazonaws.com/game-frontend:6daffaec0bbb7c6c3bc2d4c9bf9f43af5de69998",
-          "cpu": 0,
-          "links": [],
-          "portMappings": [
-              {
-                  "containerPort": 80,
-                  "hostPort": 80,
-                  "protocol": "tcp"
-              }
-          ],
-          "essential": true,
-          "entryPoint": [],
-          "command": [],
-          "environment": [],
-          "environmentFiles": [],
-          "mountPoints": [],
-          "volumesFrom": [],
-          "secrets": [],
-          "dnsServers": [],
-          "dnsSearchDomains": [],
-          "extraHosts": [],
-          "dockerSecurityOptions": [],
-          "dockerLabels": {},
-          "ulimits": [],
-          "logConfiguration": {
-              "logDriver": "awslogs",
-              "options": {
-                  "awslogs-create-group": "true",
-                  "awslogs-group": "/ecs/game-frontend-task",
-                  "awslogs-region": "eu-central-1",
-                  "awslogs-stream-prefix": "ecs"
-              },
-              "secretOptions": []
-          },
-          "systemControls": []
-      }
-  ],
-  "family": "game-frontend-task",
-  "executionRoleArn": "arn:aws:iam::729874466502:role/ecsTaskExecutionRole",
-  "networkMode": "awsvpc",
-  "revision": 10,
-  "volumes": [],
-  "status": "ACTIVE",
-  "requiresAttributes": [
-      {
-          "name": "com.amazonaws.ecs.capability.logging-driver.awslogs"
-      },
-      {
-          "name": "ecs.capability.execution-role-awslogs"
-      },
-      {
-          "name": "com.amazonaws.ecs.capability.ecr-auth"
-      },
-      {
-          "name": "com.amazonaws.ecs.capability.docker-remote-api.1.19"
-      },
-      {
-          "name": "com.amazonaws.ecs.capability.docker-remote-api.1.17"
-      },
-      {
-          "name": "ecs.capability.execution-role-ecr-pull"
-      },
-      {
-          "name": "com.amazonaws.ecs.capability.docker-remote-api.1.18"
-      },
-      {
-          "name": "ecs.capability.task-eni"
-      },
-      {
-          "name": "com.amazonaws.ecs.capability.docker-remote-api.1.29"
-      }
-  ],
-  "placementConstraints": [],
-  "compatibilities": [
-      "EC2",
-      "FARGATE"
-  ],
-  "requiresCompatibilities": [
-      "FARGATE"
-  ],
-  "cpu": "512",
-  "memory": "1024",
-  "runtimePlatform": {
-      "cpuArchitecture": "X86_64",
-      "operatingSystemFamily": "LINUX"
-  },
-  "registeredAt": "2022-11-02T16:04:06.356Z",
-  "registeredBy": "arn:aws:iam::729874466502:root",
-  "tags": [
-      {
-          "key": "ecs:taskDefinition:createdFrom",
-          "value": "ecs-console-v2"
-      },
-      {
-          "key": "ecs:taskDefinition:stackId",
-          "value": "arn:aws:cloudformation:eu-central-1:729874466502:stack/ECS-Console-V2-TaskDefinition-e0905dff-c22e-433d-9218-eeba3fa37d32/f7328b70-5ac7-11ed-b040-06dd182b5b30"
-      }
-  ]
+    "taskDefinitionArn": "arn:aws:ecs:eu-central-1:729874466502:task-definition/game-frontend-task:15",
+    "containerDefinitions": [
+        {
+            "name": "game-frontend",
+            "image": "729874466502.dkr.ecr.eu-central-1.amazonaws.com/game-frontend:99c17a81ed955d58cd1cb50d45500788d1d9849d",
+            "cpu": 0,
+            "links": [],
+            "portMappings": [
+                {
+                    "containerPort": 80,
+                    "hostPort": 80,
+                    "protocol": "tcp"
+                }
+            ],
+            "essential": true,
+            "entryPoint": [],
+            "command": [],
+            "environment": [
+                {
+                    "name": "REACT_APP_API_URL",
+                    "value": "https://game.sam-sla.net/api/"
+                }
+            ],
+            "environmentFiles": [],
+            "mountPoints": [],
+            "volumesFrom": [],
+            "secrets": [],
+            "dnsServers": [],
+            "dnsSearchDomains": [],
+            "extraHosts": [],
+            "dockerSecurityOptions": [],
+            "dockerLabels": {},
+            "ulimits": [],
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-create-group": "true",
+                    "awslogs-group": "/ecs/game-frontend-task",
+                    "awslogs-region": "eu-central-1",
+                    "awslogs-stream-prefix": "ecs"
+                },
+                "secretOptions": []
+            },
+            "systemControls": []
+        }
+    ],
+    "family": "game-frontend-task",
+    "executionRoleArn": "arn:aws:iam::729874466502:role/ecsTaskExecutionRole",
+    "networkMode": "awsvpc",
+    "revision": 15,
+    "volumes": [],
+    "status": "ACTIVE",
+    "requiresAttributes": [
+        {
+            "name": "com.amazonaws.ecs.capability.logging-driver.awslogs"
+        },
+        {
+            "name": "ecs.capability.execution-role-awslogs"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.ecr-auth"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.19"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.17"
+        },
+        {
+            "name": "ecs.capability.execution-role-ecr-pull"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.18"
+        },
+        {
+            "name": "ecs.capability.task-eni"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.29"
+        }
+    ],
+    "placementConstraints": [],
+    "compatibilities": [
+        "EC2",
+        "FARGATE"
+    ],
+    "requiresCompatibilities": [
+        "FARGATE"
+    ],
+    "cpu": "512",
+    "memory": "1024",
+    "runtimePlatform": {
+        "cpuArchitecture": "X86_64",
+        "operatingSystemFamily": "LINUX"
+    },
+    "registeredAt": "2022-11-02T21:41:50.893Z",
+    "registeredBy": "arn:aws:iam::729874466502:root",
+    "tags": [
+        {
+            "key": "ecs:taskDefinition:createdFrom",
+            "value": "ecs-console-v2"
+        },
+        {
+            "key": "ecs:taskDefinition:stackId",
+            "value": "arn:aws:cloudformation:eu-central-1:729874466502:stack/ECS-Console-V2-TaskDefinition-8dfc3eb5-59e1-4ed2-b1cc-cce328c1db36/263a72a0-5af7-11ed-ac9e-0297a00a5a9e"
+        }
+    ]
 }

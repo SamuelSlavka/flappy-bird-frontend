@@ -43,7 +43,7 @@ function GameOverPage() {
             <section className="pt-16 h-fit" data-testid="GameOverPage">
                 <div className="text-white h-fit HideScrollbars">
                     <section className="LinkTopContainer">
-                        <a href="https://gitlab.com/SamuelSlavka/game">
+                        <a href="https://github.com/SamuelSlavka/game">
                             <span className='LinkTop'>{"git repo"}</span>
                         </a>
                     </section>
