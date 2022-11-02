@@ -30,7 +30,7 @@ function LoginPage() {
             <section className="pt-16 h-full text-white HideScrollbars" data-testid="LoginPage" >
                 <section className="LinkTopContainer">
                     <Link to="/" className='LinkTop'>
-                        <span>{"< back"}</span>
+                        <span>{"< back to game"}</span>
                     </Link>
                 </section>
                 <section className='grid h-full'>
