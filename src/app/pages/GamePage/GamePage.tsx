@@ -195,7 +195,7 @@ const GamePage = () => {
           }
         }
 
-        var speed = 100;
+        var speed = 120;
         var obstructinSpaces = 200;
 
         // main game loop
