@@ -2,7 +2,7 @@ type ApiRequestOptions = {
     [key: string]: any;
 };
 
-const baseUrl = 'localhost:5000';
+const baseUrl = process.env.REACT_APP_API_URL || 'localhost:5000';
 
 export async function client(endpoint: string, options: ApiRequestOptions) {
   const headers = { 'Content-Type': 'application/json' }
