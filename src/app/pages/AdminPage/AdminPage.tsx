@@ -46,12 +46,11 @@ function AdminPage() {
             })));
         }
     }
-
     return (
         <div className="overflow-auto HideScrollbars relative min-w-full min-h-fit h-full object-cover flex flex-col justify-between">
             <section className="LinkTopContainer">
                 <Link to="/" className='LinkTop'>
-                    <span>{"< back to game"}</span>
+                    <span>{"< back to game v2"}</span>
                 </Link>
             </section>
             <section className="LinkTopContainer AlignLeft">
