@@ -1,9 +1,9 @@
 {
-    "taskDefinitionArn": "arn:aws:ecs:eu-central-1:729874466502:task-definition/game-frontend-task:15",
+    "taskDefinitionArn": "arn:aws:ecs:eu-central-1:729874466502:task-definition/game-frontend-task:19",
     "containerDefinitions": [
         {
             "name": "game-frontend",
-            "image": "729874466502.dkr.ecr.eu-central-1.amazonaws.com/game-frontend:99c17a81ed955d58cd1cb50d45500788d1d9849d",
+            "image": "729874466502.dkr.ecr.eu-central-1.amazonaws.com/game-frontend:311269ebddfb210867b1980dc2686277544700f5",
             "cpu": 0,
             "links": [],
             "portMappings": [
@@ -19,7 +19,7 @@
             "environment": [
                 {
                     "name": "REACT_APP_API_URL",
-                    "value": "https://game.sam-sla.net/api/"
+                    "value": "https://gameapi.sam-sla.net/api/"
                 }
             ],
             "environmentFiles": [],
@@ -48,7 +48,7 @@
     "family": "game-frontend-task",
     "executionRoleArn": "arn:aws:iam::729874466502:role/ecsTaskExecutionRole",
     "networkMode": "awsvpc",
-    "revision": 15,
+    "revision": 19,
     "volumes": [],
     "status": "ACTIVE",
     "requiresAttributes": [
@@ -94,7 +94,7 @@
         "cpuArchitecture": "X86_64",
         "operatingSystemFamily": "LINUX"
     },
-    "registeredAt": "2022-11-02T21:41:50.893Z",
+    "registeredAt": "2022-11-02T23:31:53.075Z",
     "registeredBy": "arn:aws:iam::729874466502:root",
     "tags": [
         {
@@ -103,7 +103,7 @@
         },
         {
             "key": "ecs:taskDefinition:stackId",
-            "value": "arn:aws:cloudformation:eu-central-1:729874466502:stack/ECS-Console-V2-TaskDefinition-8dfc3eb5-59e1-4ed2-b1cc-cce328c1db36/263a72a0-5af7-11ed-ac9e-0297a00a5a9e"
+            "value": "arn:aws:cloudformation:eu-central-1:729874466502:stack/ECS-Console-V2-TaskDefinition-3d2e703c-5eac-470d-8315-a6ca0c5b4d23/85b92c30-5b06-11ed-8c8a-063ef0f3f0bc"
         }
     ]
 }
