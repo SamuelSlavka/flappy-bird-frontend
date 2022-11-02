@@ -13,7 +13,6 @@ function GameOverPage() {
     const bestPlay = useSelector(selectBestPlay);
     const players = useSelector(selectAllPlayers);
     const closest = useSelector(selectClosestPlayer);
-    const [savedPlay, setSavedPLay] = useState(false);
 
     const [selectedPlayer, setSelectedPlayer] = useState<Partial<PlayerModel> | undefined>();
     const handleChange = (e: any) => setSelectedPlayer(prevState => ({ ...prevState, [e.target.name]: e.target.value }));
@@ -26,16 +25,11 @@ function GameOverPage() {
     }
 
     useEffect(() => {
-        if (!savedPlay) {
-            setSavedPLay(true);
-            store.dispatch(recordBestPlay({ record: state.points }));
-            store.dispatch(getClosestPlayer({ record: +(bestPlay.record ?? 0) }));
-            setSelectedPlayer({id: bestPlay.id, name: bestPlay.name, record: bestPlay.record })
-        }
-    }, [state, bestPlay, savedPlay])
-
-    useEffect(() => {
         store.dispatch(fetchAllPlayers({}))
+        store.dispatch(recordBestPlay({ record: state.points }));
+        store.dispatch(getClosestPlayer({ record: +(bestPlay.record ?? 0) }));
+        setSelectedPlayer({id: bestPlay.id, name: bestPlay.name, record: bestPlay.record });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     return (
