@@ -68,7 +68,7 @@ function AdminPage() {
                     </div>
 
                     <div className="flex justify-center pt-4">
-                        <section className='w-xs max-w-fit'>
+                        <section className='w-full max-w-fit'>
                             {players.map(player => <Play key={player.id} player={player} setSelectedPlayer={setSelectedPlayer} isAdmin={true} />)}
                         </section>
                     </div>

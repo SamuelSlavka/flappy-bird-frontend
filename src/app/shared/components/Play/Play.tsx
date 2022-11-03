@@ -11,7 +11,7 @@ interface PlayProps {
 
 const Play: FC<PlayProps> = (props) => {
   return (
-    <section key={props.player.id} className={`grid grid-cols-${props.isAdmin ? 3 : 2} content-between pb-8 text-center font-bold hover:text-light ease-in-out duration-200`}>
+    <section key={props.player.id} className={`grid grid-flow-col auto-cols-max content-between pb-8 text-center font-bold hover:text-light ease-in-out duration-200`}>
       <span className='text-white grid content-center'>
         <span className=''>{props.player.name}</span>
       </span>
