@@ -1,9 +1,9 @@
 {
-    "taskDefinitionArn": "arn:aws:ecs:eu-central-1:729874466502:task-definition/game-frontend-task:19",
+    "taskDefinitionArn": "arn:aws:ecs:eu-central-1:729874466502:task-definition/game-frontend-task:21",
     "containerDefinitions": [
         {
             "name": "game-frontend",
-            "image": "729874466502.dkr.ecr.eu-central-1.amazonaws.com/game-frontend:311269ebddfb210867b1980dc2686277544700f5",
+            "image": "729874466502.dkr.ecr.eu-central-1.amazonaws.com/game-frontend:c270a7ce5df3975adb1a03aa3ab23866ae416d21",
             "cpu": 0,
             "links": [],
             "portMappings": [
@@ -16,12 +16,7 @@
             "essential": true,
             "entryPoint": [],
             "command": [],
-            "environment": [
-                {
-                    "name": "REACT_APP_API_URL",
-                    "value": "https://gameapi.sam-sla.net/api/"
-                }
-            ],
+            "environment": [],
             "environmentFiles": [],
             "mountPoints": [],
             "volumesFrom": [],
@@ -48,7 +43,7 @@
     "family": "game-frontend-task",
     "executionRoleArn": "arn:aws:iam::729874466502:role/ecsTaskExecutionRole",
     "networkMode": "awsvpc",
-    "revision": 19,
+    "revision": 21,
     "volumes": [],
     "status": "ACTIVE",
     "requiresAttributes": [
@@ -94,7 +89,7 @@
         "cpuArchitecture": "X86_64",
         "operatingSystemFamily": "LINUX"
     },
-    "registeredAt": "2022-11-02T23:31:53.075Z",
+    "registeredAt": "2022-11-03T07:28:09.685Z",
     "registeredBy": "arn:aws:iam::729874466502:root",
     "tags": [
         {
@@ -103,7 +98,7 @@
         },
         {
             "key": "ecs:taskDefinition:stackId",
-            "value": "arn:aws:cloudformation:eu-central-1:729874466502:stack/ECS-Console-V2-TaskDefinition-3d2e703c-5eac-470d-8315-a6ca0c5b4d23/85b92c30-5b06-11ed-8c8a-063ef0f3f0bc"
+            "value": "arn:aws:cloudformation:eu-central-1:729874466502:stack/ECS-Console-V2-TaskDefinition-b70817e2-7dd3-4bbf-be99-e1e8501ab307/0e7285c0-5b49-11ed-a6d1-02321a400776"
         }
     ]
 }
