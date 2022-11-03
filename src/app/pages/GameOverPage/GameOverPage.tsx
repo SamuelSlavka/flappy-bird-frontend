@@ -32,6 +32,13 @@ function GameOverPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
+    const getPosition = () => {
+        if( closest?.record === bestPlay.record) {
+            return closest?.rank;
+        }
+        return (+(closest?.record ?? 0) > +(bestPlay.record ?? 0)) ? +(closest?.rank ?? 1) + 1 : closest?.rank ?? 0
+    }
+
     return (
         <div className="overflow-auto HideScrollbars inline-block relative min-w-full min-h-fit h-full object-cover">
             <section className="pt-16 h-fit" data-testid="GameOverPage">
@@ -52,15 +59,15 @@ function GameOverPage() {
                     </h1>
                     <section className="w-full flex justify-center hover:text-light ease-in-out duration-200">
                         <span className="text-center text-xl">
-                            You got: <span className='font-bold'> {state.points} </span> points
+                            You got <span className='font-bold'> {state.points} </span> points
                         </span>
                     </section>
                     <section className="w-full flex justify-center hover:text-light ease-in-out duration-200  mt-4 mb-8">
                         <span className="text-center text-xl">
-                            Your best:
+                            Your best
                             <span className='font-bold'> {bestPlay.record} </span>
-                            points:
-                            <span className='font-bold'> {(+(closest?.record ?? 0) > +(bestPlay.record ?? 0)) ? +(closest?.rank ?? 1) + 1 : closest?.rank ?? 0} </span>
+                            points position
+                            <span className='font-bold'> {getPosition()} </span>
                             in the leaderboard
                         </span>
                     </section>
