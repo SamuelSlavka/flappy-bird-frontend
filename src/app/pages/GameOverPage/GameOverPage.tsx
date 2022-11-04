@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { Link, useLocation } from 'react-router-dom';
 import store from '../../store/store';
 import Play from '../../shared/components/Play/Play';
-import { selectBestPlay, recordBestPlay, fetchAllPlayers, selectAllPlayers, upsertPlayer, getClosestPlayer, selectClosestPlayer } from '../GamePage/store/playerSlice';
+import { selectBestPlay, setBestPlay, fetchAllPlayers, selectAllPlayers, upsertPlayer, getClosestPlayer, selectClosestPlayer } from '../GamePage/store/playerSlice';
 import styles from './GameOverPage.module.scss';
 import FormModal from '../../shared/components/FormModal/FormModal';
 import { PlayerModel } from '../GamePage/store/playerModel';
@@ -18,22 +18,22 @@ function GameOverPage() {
     const handleChange = (e: any) => setSelectedPlayer(prevState => ({ ...prevState, [e.target.name]: e.target.value }));
 
     const triggerUpsert = (player: Partial<PlayerModel> | undefined) => {
-        store.dispatch(recordBestPlay({ name: player?.name, record: +(bestPlay.record ?? 0) }));
+        store.dispatch(setBestPlay({ name: player?.name, record: +(bestPlay.record ?? 0) }));
         store.dispatch((upsertPlayer({
             player: { id: player?.id, name: player?.name, record: player?.record?.toString() },
         })));
     }
 
     useEffect(() => {
-        store.dispatch(fetchAllPlayers({}))
-        store.dispatch(recordBestPlay({ record: state.points }));
+        store.dispatch(fetchAllPlayers({}));
+        store.dispatch(setBestPlay({ record: state.points }));
         store.dispatch(getClosestPlayer({ record: +(bestPlay.record ?? 0) }));
-        setSelectedPlayer({id: bestPlay.id, name: bestPlay.name, record: bestPlay.record });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        setSelectedPlayer({ id: bestPlay.id, name: bestPlay.name, record: (bestPlay.record ?? 0) > state.points ? bestPlay.record : state.points });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     const getPosition = () => {
-        if( closest?.record === bestPlay.record) {
+        if (closest?.record === bestPlay.record) {
             return closest?.rank;
         }
         return (+(closest?.record ?? 0) > +(bestPlay.record ?? 0)) ? +(closest?.rank ?? 1) + 1 : closest?.rank ?? 0
@@ -44,13 +44,20 @@ function GameOverPage() {
             <section className="pt-16 h-fit" data-testid="GameOverPage">
                 <div className="text-white h-fit HideScrollbars">
                     <section className="LinkTopContainer">
-                        <a href="https://github.com/SamuelSlavka/game">
-                            <span className='LinkTop'>{"git repo"}</span>
-                        </a>
+                        <section className="min-w-fit mr-4 mt-2">
+                            <Link to="/admin" className='LinkTop'>
+                                <span>{"admin"}</span>
+                            </Link>
+                        </section>
+                        <section className="min-w-fit mr-4 mt-2">
+                            <a href="https://github.com/SamuelSlavka/game">
+                                <span className='LinkTop'>{"git"}</span>
+                            </a>
+                        </section>
                     </section>
                     <section className="LinkTopContainer AlignLeft">
                         <label htmlFor="edit-modal" className="btn btn-outline btn-primary text-center font-bold">
-                            Save best to leaderboard
+                            Save to leaderboard
                         </label>
                     </section>
 

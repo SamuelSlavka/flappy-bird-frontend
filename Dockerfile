@@ -1,16 +1,13 @@
 # #  Stage 1 - build
 # base image
-FROM alpine:latest as build
+FROM node:latest as build
 
 # Create app directory
 WORKDIR /app
 
 # Install app dependencies
 COPY . /app/
-RUN apk add --update npm
-RUN npm install --global yarn
-RUN yarn install --prefer-offline --frozen-lockfile --network-timeout=400000
-RUN yarn add react-scripts -g
+RUN yarn install --prefer-offline --frozen-lockfile --network-timeout=400000 --cache-folder .yarn-cache
 RUN yarn run build
 
 # # stage 2 - deploy

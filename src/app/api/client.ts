@@ -5,7 +5,10 @@ type ApiRequestOptions = {
 const baseUrl = process.env.REACT_APP_API_URL || 'https://gameapi.sam-sla.net/api/';
 
 export async function client(endpoint: string, options: ApiRequestOptions) {
-  const headers = { 'Content-Type': 'application/json' }
+  const headers = {
+    'Content-Type': 'application/json',
+    'Access-Control-Allow-Origin': '*'
+  }
   const access_token = localStorage.getItem("access_token");
   const config = {
     method: options.method,
@@ -34,7 +37,6 @@ export async function client(endpoint: string, options: ApiRequestOptions) {
     }
     throw new Error(response.statusText)
   } catch (err: any) {
-    console.error(err)
     return Promise.reject(err?.message ? err?.message : data)
   }
 }

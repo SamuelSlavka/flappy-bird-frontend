@@ -26,7 +26,7 @@ export const playerSlice = createSlice({
         setPage: (state: PlayerState, action: PayloadAction<{ page: number }>) => {
             state.page = action.payload.page;
         },
-        recordBestPlay: (state: PlayerState, action: PayloadAction<{ name?: string, record: number }>) => {
+        setBestPlay: (state: PlayerState, action: PayloadAction<{ name?: string, record: number }>) => {
             state.bestPlay.name = action.payload.name ? action.payload.name : state.bestPlay.name;
             state.bestPlay.record = (action.payload.record > +(state.bestPlay.record ?? 0)) ? action.payload.record.toString() : state.bestPlay.record;
         },
@@ -59,8 +59,13 @@ export const playerSlice = createSlice({
             toast.success("Delete successfull", { theme: "dark", autoClose: 2000, pauseOnFocusLoss: false });
             state.loading = false;
         })
+        
+        builder.addMatcher(isAnyOf (upsertPlayer.rejected, deletePlayer.rejected), (state) => {
+            toast.error("Action failed", { theme: "dark", autoClose: 2000, pauseOnFocusLoss: false });
+            state.loading = false;
+        })
 
-        builder.addMatcher(isAnyOf (getClosestPlayer.rejected, fetchAllPlayers.rejected, deletePlayer.rejected), (state) => {
+        builder.addMatcher(isAnyOf (getClosestPlayer.rejected, fetchAllPlayers.rejected), (state) => {
             state.loading = false;
         })
 
@@ -70,7 +75,7 @@ export const playerSlice = createSlice({
     }
 });
 
-export const { setPage, recordBestPlay } = playerSlice.actions;
+export const { setPage, setBestPlay } = playerSlice.actions;
 
 export const {
     selectById: selectPlayerById,

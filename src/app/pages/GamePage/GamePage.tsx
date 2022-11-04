@@ -204,7 +204,7 @@ const GamePage = () => {
           if (constraints && engine) {
             let { height, width } = constraints;
             const playHeight = Math.min(height, 800);
-            const playMargins = (height - playHeight)/2
+            const playMargins = (height - playHeight) / 2
             let randomY = Math.floor(Math.random() * ((Math.min(playHeight, 800) - 40 - playMargins - obstructinSpaces))) + 40 + playMargins;
             const spacer = (randomY) + obstructinSpaces;
             const bottomHeight = height - spacer;
@@ -242,29 +242,15 @@ const GamePage = () => {
       onClick={() => setGameStage(GameStages.PLAY)}
     >
       {gameStage !== GameStages.PLAY ?
-        <>
-          <section className="LinkTopContainer">
-            <section className="min-w-fit mr-4">
-              <a href="https://gitlab.com/SamuelSlavka/game">
-                <span className='LinkTop'>{"git repo"}</span>
-              </a>
-            </section>
-            <section className="min-w-fit mr-2">
-              <Link to="/admin" className='LinkTop'>
-                <span>{"admin"}</span>
-              </Link>
+        <section className='grid h-full'>
+          <section className="place-self-center w-fit">
+            <section className="pt-24 text-center text-l font-bold hover:text-light ease-in-out duration-200">
+              <p className='mb-8 text-2xl'>Press anything to start </p>
+              <p className='mb-2'> controll with keyboad/touchscreen </p>
+              <p> roof and floor bounce!! </p>
             </section>
           </section>
-          <section className='grid h-full'>
-            <section className="place-self-center w-fit">
-              <section className="pt-24 text-center text-l font-bold hover:text-light ease-in-out duration-200">
-                <p className='mb-8 text-2xl'>Press anything to start </p>
-                <p className='mb-2'> controll with keyboad/touchscreen </p>
-                <p> roof and floor bounce!! </p>
-              </section>
-            </section>
-          </section>
-          </>
+        </section>
         :
         <></>
       }
