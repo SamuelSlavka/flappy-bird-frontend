@@ -26,9 +26,9 @@ function GameOverPage() {
 
     useEffect(() => {
         store.dispatch(fetchAllPlayers({}));
-        store.dispatch(setBestPlay({ record: state.points }));
+        store.dispatch(setBestPlay({ record: state?.points }));
         store.dispatch(getClosestPlayer({ record: +(bestPlay.record ?? 0) }));
-        setSelectedPlayer({ id: bestPlay.id, name: bestPlay.name, record: (bestPlay.record ?? 0) > state.points ? bestPlay.record : state.points });
+        setSelectedPlayer({ id: bestPlay.id, name: bestPlay.name, record: (bestPlay.record ?? 0) > state?.points ? bestPlay.record : state?.points });
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
@@ -66,18 +66,19 @@ function GameOverPage() {
                     </h1>
                     <section className="w-full flex justify-center hover:text-light ease-in-out duration-200">
                         <span className="text-center text-xl">
-                            You got <span className='font-bold'> {state.points} </span> points
+                            You got <span className='font-bold'> {state?.points ?? 0} </span> points
                         </span>
                     </section>
+                    { bestPlay.record ?
                     <section className="w-full flex justify-center hover:text-light ease-in-out duration-200  mt-4 mb-8">
                         <span className="text-center text-xl">
                             Your best
                             <span className='font-bold'> {bestPlay.record} </span>
-                            points position
+                            points is position
                             <span className='font-bold'> {getPosition()} </span>
                             in the leaderboard
                         </span>
-                    </section>
+                    </section> : <></>}
                     <div className="flex justify-center mb-8">
                         <Link to="/">
                             <button className="btn btn-primary text-center font-bold">

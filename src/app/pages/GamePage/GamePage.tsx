@@ -2,7 +2,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Matter from 'matter-js';
 import { ColorScheme } from '../../enums/ColorScheme';
-import { Link } from 'react-router-dom';
 import { handleSingleKeypress } from './utils/input_handling';
 import { handleResize } from './utils/resize_handling';
 import { Constants, GameStages } from './enums/gameConstants';
@@ -54,7 +53,7 @@ const GamePage = () => {
       engine: engine,
       canvas: canvasRef.current ?? undefined,
       options: {
-        background: ColorScheme.black,
+        background: 'transparent',
         wireframes: false
       }
     });
@@ -238,13 +237,13 @@ const GamePage = () => {
         width: '100%',
         height: '100%'
       }}
-      className="bg-black"
+      className=""
       onClick={() => setGameStage(GameStages.PLAY)}
     >
       {gameStage !== GameStages.PLAY ?
         <section className='grid h-full'>
           <section className="place-self-center w-fit">
-            <section className="pt-24 text-center text-l font-bold hover:text-light ease-in-out duration-200">
+            <section className="text-center text-l font-bold hover:text-light ease-in-out duration-200">
               <p className='mb-8 text-2xl'>Press anything to start </p>
               <p className='mb-2'> controll with keyboad/touchscreen </p>
               <p> roof and floor bounce!! </p>

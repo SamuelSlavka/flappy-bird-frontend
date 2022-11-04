@@ -21,7 +21,29 @@ body,
   overflow: hidden;
   height: 100%;
   min-height: fit-content;
+  /* background: #2a303c; */
+	background: linear-gradient(-45deg, #2a303c, #280A5C, #2a303c);
+	background-size: 200% 200%;
+  -webkit-animation: gradient 100s ease infinite;
+  -moz-animation: gradient 100s ease infinite;
+	animation: gradient 100s ease infinite;
   @apply text-white;
+}
+
+@-webkit-keyframes gradient {
+  0%{background-position:0% 0%}
+  50%{background-position: 100% 100%}
+  100%{background-position: 0% 0%}
+}
+@-moz-keyframes gradient {
+  0%{background-position:0% 0%}
+  50%{background-position: 100% 100%}
+  100%{background-position: 0% 0%}
+}
+@keyframes gradient {
+  0%{background-position:0% 0%}
+  50%{background-position: 100% 100%}
+  100%{background-position: 0% 0%}
 }
 
 .LinkTopContainer {

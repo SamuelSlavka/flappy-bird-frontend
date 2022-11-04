@@ -1,9 +1,5 @@
 node_modules
 npm-debug.log
-build# Elastic Beanstalk Files
-.elasticbeanstalk/*
-.git
-.gitignore# Elastic Beanstalk Files
-.elasticbeanstalk/*
+build
 .git
 .gitignore
