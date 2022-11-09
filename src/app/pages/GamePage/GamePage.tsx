@@ -1,7 +1,6 @@
 // MatterStepOne.js
 import React, { useEffect, useRef, useState } from 'react';
 import Matter from 'matter-js';
-import { ColorScheme } from '../../enums/ColorScheme';
 import { handleSingleKeypress } from './utils/input_handling';
 import { handleResize } from './utils/resize_handling';
 import { Constants, GameStages } from './enums/gameConstants';
